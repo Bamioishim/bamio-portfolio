@@ -34,5 +34,5 @@ html:not(.light) .chapters{background:#16130F;--ch-ink:#F1E9DB;--ch-mute:#9A8E7C
 .ch-col{border-color:rgb(var(--ch-line)/.12);background:rgb(var(--ch-line)/.02)}.ch-col:hover,.ch-on{background:rgb(var(--ch-line)/.06);border-color:rgb(var(--ch-line)/.25)}
 .paper-grain{opacity:.18;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 html:not(.light) .paper-grain{mix-blend-mode:screen;opacity:.06}
-.mesh{animation:mesh 18s ease-in-out infinite alternate}
-@keyframes mesh{to{transform:translate(4%,-3%) rotate(8deg) scale(1.08)}}
+.cp{will-change:transform;transform:translateZ(0)}.mesh{will-change:transform;backface-visibility:hidden}.mesh-on{animation:mesh 18s ease-in-out infinite alternate}.ch-off .mesh-on{animation-play-state:paused}#chapters{contain:layout paint}
+@keyframes mesh{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(4%,-3%,0) scale(1.08)}}

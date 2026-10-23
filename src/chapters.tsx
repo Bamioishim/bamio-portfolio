@@ -19,18 +19,32 @@ export function Chapters() {
   const [active, setActive] = useState(0)
   const root = useRef<HTMLDivElement>(null)
   const prev = useRef(0)
+  const intent = useRef<number>()
+  const fine = typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (pointer: fine)').matches
+  const hover = (i: number) => { clearTimeout(intent.current); if (!fine) return; intent.current = window.setTimeout(() => setActive(i), 90) }
+  const pick = (i: number) => { clearTimeout(intent.current); setActive(i) }
+  useEffect(() => () => clearTimeout(intent.current), [])
+  // pause gradient drift when section is offscreen
+  useEffect(() => {
+    const el = root.current; if (!el) return
+    const io = new IntersectionObserver(([e]) => el.classList.toggle('ch-off', !e.isIntersecting))
+    io.observe(el); return () => io.disconnect()
+  }, [])
   useEffect(() => {
     const el = root.current; if (!el) return
     const q = gsap.utils.selector(el)
-    if (prev.current === active) { gsap.set(q('.cp'), { yPercent: 100 }); gsap.set(q(`.cp${active}`), { yPercent: 0 }); gsap.set(q('.ct'), { yPercent: 110, opacity: 0 }); gsap.set(q(`.ct${active}`), { yPercent: 0, opacity: 1 }); return }
+    const panels = q('.cp'), texts = q('.ct')
+    if (prev.current === active) { gsap.set(panels, { yPercent: 100 }); gsap.set(q(`.cp${active}`), { yPercent: 0 }); gsap.set(texts, { yPercent: 110, autoAlpha: 0 }); gsap.set(q(`.ct${active}`), { yPercent: 0, autoAlpha: 1 }); return }
     const from = prev.current; prev.current = active
-    const d = reduced ? 0 : 0.9, e = 'expo.inOut'
-    gsap.killTweensOf(q('.cp,.ct'))
-    q('.cp').forEach((p, i) => { if (i !== from && i !== active) gsap.set(p, { yPercent: 100 }) })
-    gsap.fromTo(q(`.cp${from}`), { yPercent: 0 }, { yPercent: -100, duration: d, ease: e })
-    gsap.fromTo(q(`.cp${active}`), { yPercent: 100 }, { yPercent: 0, duration: d, ease: e })
-    gsap.to(q(`.ct${from}`), { yPercent: -110, opacity: 0, duration: d * .4, ease: 'power2.in', stagger: .02 })
-    gsap.fromTo(q(`.ct${active}`), { yPercent: 110, opacity: 0 }, { yPercent: 0, opacity: 1, duration: d * .8, ease: 'power3.out', delay: d * .4, stagger: .05 })
+    const d = reduced ? 0 : 0.8, e = 'expo.inOut'
+    gsap.killTweensOf(panels); gsap.killTweensOf(texts)
+    // everything except outgoing + incoming is parked below (conveyor never reverses)
+    panels.forEach((p, i) => { if (i !== from && i !== active) gsap.set(p, { yPercent: 100 }) })
+    texts.forEach(t => { if (!t.classList.contains(`ct${from}`) && !t.classList.contains(`ct${active}`)) gsap.set(t, { yPercent: 110, autoAlpha: 0 }) })
+    gsap.to(q(`.cp${from}`), { yPercent: -100, duration: d, ease: e, overwrite: true })
+    gsap.fromTo(q(`.cp${active}`), { yPercent: 100 }, { yPercent: 0, duration: d, ease: e, overwrite: true })
+    gsap.to(q(`.ct${from}`), { yPercent: -110, autoAlpha: 0, duration: d * .3, ease: 'power2.in', overwrite: true })
+    gsap.fromTo(q(`.ct${active}`), { yPercent: 110, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: d * .6, ease: 'power3.out', delay: d * .32, stagger: .04, overwrite: true })
   }, [active])
   const cur = chapters[active]
   return <section id="chapters" ref={root} className="chapters relative mt-3 overflow-hidden rounded-[28px] p-5 md:mt-8 md:p-10">
@@ -42,9 +56,9 @@ export function Chapters() {
     </div>
     <div className="relative flex flex-col gap-2 md:h-[560px] md:flex-row">
       {/* panel stage */}
-      <div className="relative order-first h-[300px] overflow-hidden rounded-[20px] md:order-none md:h-auto md:flex-[3.2]">
-        {chapters.map((c, i) => <div key={c.n} className={`cp cp${i} absolute inset-0`} style={{ background: c.g }} aria-hidden>
-          <div className="mesh absolute inset-[-20%]" style={{ background: c.g, filter: 'blur(40px)', opacity: .7 }} /></div>)}
+      <div className="relative order-first h-[300px] overflow-hidden rounded-[20px] md:order-none md:h-auto md:w-[36%] md:flex-none">
+        {chapters.map((c, i) => <div key={c.n} className={`cp cp${i} absolute inset-0 overflow-hidden`} aria-hidden>
+          <div className={`mesh absolute inset-[-12%] ${i === active ? 'mesh-on' : ''}`} style={{ background: c.g }} /></div>)}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
         <div className="absolute inset-0 text-white" aria-live="polite">
           {chapters.map((c, i) => <div key={c.n} className="absolute inset-x-6 bottom-6 md:inset-x-8 md:bottom-8" aria-hidden={i !== active}>
@@ -58,7 +72,7 @@ export function Chapters() {
       {/* columns */}
       {chapters.map((c, i) => {
         const on = i === active
-        return <button key={c.n} onMouseEnter={() => setActive(i)} onFocus={() => setActive(i)} onClick={() => setActive(i)} aria-pressed={on}
+        return <button key={c.n} onMouseEnter={() => hover(i)} onMouseLeave={() => clearTimeout(intent.current)} onFocus={() => pick(i)} onClick={() => pick(i)} aria-pressed={on}
           className={`ch-col group relative flex items-center gap-4 rounded-[20px] border px-5 py-4 text-left transition-[flex-grow,background-color,border-color] duration-500 ease-[cubic-bezier(.76,0,.24,1)] md:flex-col md:items-start md:justify-between md:py-6 ${on ? 'ch-on md:flex-[1.3]' : 'md:flex-[.55]'}`}>
           <span className="ch-mute font-display text-[13px]">{c.n}</span>
           <span className="ch-ink font-display text-[18px] font-medium leading-tight md:[writing-mode:vertical-rl] md:rotate-180 md:text-[22px]">{c.k}</span>
