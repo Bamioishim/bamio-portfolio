@@ -15,11 +15,11 @@ const spring = { type: 'spring', stiffness: 400, damping: 28 } as const
 const projects = [
   { n: 'Soft Landing', y: "'26", t: 'Web', isNew: true }, { n: 'BrainDump', y: "'26", t: 'Web' },
   { n: 'RedTeam Demo', y: "'26", t: 'Web' }, { n: 'Night Posters', y: "'25", t: 'Visual' },
-  { n: 'Orange Series', y: "'25", t: 'Visual' }, { n: 'Lagos Grid', y: "'25", t: 'Web' },
+  { n: 'Orange Series', y: "'25", t: 'Visual' }, { n: 'Grid System', y: "'25", t: 'Web' },
   { n: 'Type Studies', y: "'24", t: 'Visual' }, { n: 'Signal Deck', y: "'24", t: 'Web' },
 ]
 const stack = [['Lovable','Web build'],['Manus','Web build'],['Render','Hosting'],['GitHub','Code'],['GSAP','Motion'],['Lenis','Scroll'],['Figma','Visual design'],['Replit','Web build']]
-const features = [['Builder Weekly',"'26"],['Lagos Tech Notes',"'25"],['Devpost Picks',"'26"],['Design Daily',"'25"]]
+const features = [['Builder Weekly',"'26"],['Tech Notes',"'25"],['Devpost Picks',"'26"],['Design Daily',"'25"]]
 const channels = [['X','Visual design'],['LinkedIn','Web design'],['GitHub','Code'],['TikTok','Visual design'],['Instagram','Visual design']]
 const clients = ['Qloo','Sui','Hydra','Burrowpad','IBNAi','OmniRush','Aqua0','Data Labs']
 
@@ -61,7 +61,6 @@ function Intro() {
       .to(n, { v: 100, duration: 1.45, ease: 'power2.inOut', onUpdate: () => { const e = q('.icount')[0]; if (e) e.textContent = String(Math.round(n.v)).padStart(3, '0') } }, 0)
       .fromTo(q('.ibar'), { scaleX: 0 }, { scaleX: 1, duration: 1.45, ease: 'power2.inOut' }, 0)
       .fromTo(q('.iline'), { yPercent: 100, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, 0.45)
-      .fromTo(q('.isig'), { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', duration: 0.7, ease: 'power2.inOut' }, 0.7)
       .fromTo(q('.imeta'), { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.05 }, 0.2)
       .addLabel('out', 1.6)
       .to(q('.il'), { yPercent: -115, duration: 0.45, ease: 'power3.in', stagger: 0.03 }, 'out')
@@ -77,13 +76,12 @@ function Intro() {
     <div className="itop absolute inset-x-0 top-0 h-1/2 bg-orange" /><div className="ibot absolute inset-x-0 bottom-0 h-1/2 bg-orange" />
     <div className="grain !absolute !z-[1] !opacity-[.09]" />
     <div className="relative z-[2] flex h-full flex-col justify-between p-5 md:p-8">
-      <div className="ifade flex justify-between text-[11px] uppercase tracking-[.2em]"><span className="imeta">Portfolio — ©2026</span><span className="imeta">6.52°N 3.37°E · Lagos</span></div>
+      <div className="ifade flex justify-between text-[11px] uppercase tracking-[.2em]"><span className="imeta">Portfolio — ©2026</span><span className="imeta">Available — 2026</span></div>
       <div className="flex flex-col items-center">
         <div className="relative">
           <h1 className="flex overflow-hidden text-[24vw] font-semibold leading-[.82] tracking-[-.06em] md:text-[17vw]">{'BAMIO'.split('').map((c, i) => <span key={i} className="il inline-block">{c}</span>)}</h1>
-          <span className="isig ifade absolute -top-[.55em] right-[-.35em] font-['Mrs_Saint_Delafield'] text-[11vw] leading-none text-[#141413] md:text-[6vw]" style={{ transform: 'rotate(-8deg)' }}>Bamio</span>
         </div>
-        <div className="ifade overflow-hidden"><p className="iline mt-4 font-['Instrument_Serif'] text-2xl italic md:text-4xl">Designer &amp; builder, <span className="not-italic">Lagos</span></p></div>
+        <div className="ifade overflow-hidden"><p className="iline mt-4 font-['Instrument_Serif'] text-2xl italic md:text-4xl">Designer &amp; builder</p></div>
       </div>
       <div className="ifade flex items-end justify-between gap-6">
         <span className="icount font-['Instrument_Serif'] text-6xl leading-none tabular-nums md:text-8xl">000</span>

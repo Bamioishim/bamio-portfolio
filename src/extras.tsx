@@ -17,7 +17,7 @@ export function Studio() {
     <div className="relative z-10">
       <p className="reveal mb-3 text-[11px] uppercase tracking-[0.18em] text-orange">Studio</p>
       <h2 className="reveal text-[clamp(34px,5vw,72px)] font-medium leading-[0.95] text-white">Ideas in,<br />sites out.</h2>
-      <p className="reveal mt-5 max-w-sm text-[14px] text-mute">A one-person studio from Lagos. I take a rough idea, shape it with the best tools around, and ship something people enjoy using.</p>
+      <p className="reveal mt-5 max-w-sm text-[14px] text-mute">A one-person studio. I take a rough idea, shape it with the best tools around, and ship something people enjoy using.</p>
     </div>
     <div className="relative h-[340px] md:h-[520px]">
       {seen && <Suspense fallback={null}><ParticleHead active={vis} /></Suspense>}
@@ -77,7 +77,7 @@ export function DuneFooter({ children }: { children?: React.ReactNode }) {
       <div className="relative flex items-center justify-center">
         <div className="halo absolute aspect-square w-[min(78vw,520px)] rounded-full" aria-hidden />
         <div ref={word} className="relative text-center">
-          <p className="mb-5 text-[11px] uppercase tracking-[0.22em] text-mute">Lagos · Available 2026</p>
+          <p className="mb-5 text-[11px] uppercase tracking-[0.22em] text-mute">Available 2026</p>
           <h2 className="font-serifd text-[clamp(44px,8.5vw,112px)] italic leading-[0.95] tracking-[-0.02em] text-white" style={{ fontFamily: '"Instrument Serif", Georgia, serif', fontWeight: 400 }}>
             <span className="block overflow-hidden pb-1"><span className="sl block">Let's build</span></span>
             <span className="block overflow-hidden pb-2"><span className="sl block">something <span className="text-orange">good.</span></span></span>
