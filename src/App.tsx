@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import Lenis from 'lenis'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion'
+import { motion, useMotionValue, useSpring } from 'framer-motion'
 import { Toaster, toast } from 'sonner'
 import { Drawer } from 'vaul'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
@@ -48,16 +48,56 @@ function Cursor() {
 
 function Intro() {
   const [show, setShow] = useState(!reduced)
-  useEffect(() => { const t = setTimeout(() => setShow(false), 900); return () => clearTimeout(t) }, [])
-  return <AnimatePresence>{show && <motion.div className="fixed inset-0 z-[80] flex items-center justify-center bg-orange"
-    initial={{ y: 0 }} exit={{ y: '-100%' }} transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}>
-    <h1 className="text-5xl font-semibold text-ink">BAMIO</h1></motion.div>}</AnimatePresence>
+  const root = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (!show || !root.current) return
+    document.documentElement.style.overflow = 'hidden'
+    const q = gsap.utils.selector(root.current)
+    const n = { v: 0 }
+    const done = () => { document.documentElement.style.overflow = ''; setShow(false) }
+    const tl = gsap.timeline({ onComplete: done })
+    tl.set(q('.il'), { yPercent: 115, rotate: 6 })
+      .to(q('.il'), { yPercent: 0, rotate: 0, duration: 0.75, ease: 'back.out(1.6)', stagger: 0.06 }, 0.1)
+      .to(n, { v: 100, duration: 1.45, ease: 'power2.inOut', onUpdate: () => { const e = q('.icount')[0]; if (e) e.textContent = String(Math.round(n.v)).padStart(3, '0') } }, 0)
+      .fromTo(q('.ibar'), { scaleX: 0 }, { scaleX: 1, duration: 1.45, ease: 'power2.inOut' }, 0)
+      .fromTo(q('.iline'), { yPercent: 100, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, 0.45)
+      .fromTo(q('.isig'), { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', duration: 0.7, ease: 'power2.inOut' }, 0.7)
+      .fromTo(q('.imeta'), { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.05 }, 0.2)
+      .addLabel('out', 1.6)
+      .to(q('.il'), { yPercent: -115, duration: 0.45, ease: 'power3.in', stagger: 0.03 }, 'out')
+      .to(q('.ifade'), { opacity: 0, duration: 0.3 }, 'out')
+      .to(q('.itop'), { yPercent: -100, duration: 0.7, ease: 'expo.inOut' }, 'out+=0.25')
+      .to(q('.ibot'), { yPercent: 100, duration: 0.7, ease: 'expo.inOut' }, 'out+=0.25')
+    const skip = () => { if (tl.time() < 1.6) tl.seek('out') }
+    window.addEventListener('keydown', skip); root.current.addEventListener('click', skip)
+    return () => { window.removeEventListener('keydown', skip); tl.kill(); document.documentElement.style.overflow = '' }
+  }, [show])
+  if (!show) return null
+  return <div ref={root} className="intro fixed inset-0 z-[80] cursor-pointer select-none overflow-hidden text-ink" aria-hidden>
+    <div className="itop absolute inset-x-0 top-0 h-1/2 bg-orange" /><div className="ibot absolute inset-x-0 bottom-0 h-1/2 bg-orange" />
+    <div className="grain !absolute !z-[1] !opacity-[.09]" />
+    <div className="relative z-[2] flex h-full flex-col justify-between p-5 md:p-8">
+      <div className="ifade flex justify-between text-[11px] uppercase tracking-[.2em]"><span className="imeta">Portfolio — ©2026</span><span className="imeta">6.52°N 3.37°E · Lagos</span></div>
+      <div className="flex flex-col items-center">
+        <div className="relative">
+          <h1 className="flex overflow-hidden text-[24vw] font-semibold leading-[.82] tracking-[-.06em] md:text-[17vw]">{'BAMIO'.split('').map((c, i) => <span key={i} className="il inline-block">{c}</span>)}</h1>
+          <span className="isig ifade absolute -top-[.55em] right-[-.35em] font-['Mrs_Saint_Delafield'] text-[11vw] leading-none text-[#141413] md:text-[6vw]" style={{ transform: 'rotate(-8deg)' }}>Bamio</span>
+        </div>
+        <div className="ifade overflow-hidden"><p className="iline mt-4 font-['Instrument_Serif'] text-2xl italic md:text-4xl">Designer &amp; builder, <span className="not-italic">Lagos</span></p></div>
+      </div>
+      <div className="ifade flex items-end justify-between gap-6">
+        <span className="icount font-['Instrument_Serif'] text-6xl leading-none tabular-nums md:text-8xl">000</span>
+        <div className="mb-3 flex flex-1 flex-col items-end gap-2"><span className="imeta text-[11px] uppercase tracking-[.2em]">Click / any key to skip</span>
+          <div className="h-px w-full max-w-xs bg-ink/20"><div className="ibar h-px origin-left bg-ink" /></div></div>
+      </div>
+    </div>
+  </div>
 }
 
 function SplitText({ text, className }: { text: string; className?: string }) {
   return <span className={className} aria-label={text}>{text.split('').map((c, i) =>
     <span key={i} className="inline-block overflow-hidden align-bottom"><motion.span aria-hidden className="inline-block"
-      initial={{ y: reduced ? 0 : '110%' }} animate={{ y: 0 }} transition={{ delay: 1 + i * 0.05, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
+      initial={{ y: reduced ? 0 : '110%' }} animate={{ y: 0 }} transition={{ delay: (reduced ? 0 : 2.1) + i * 0.05, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
       {c === ' ' ? '\u00A0' : c}</motion.span></span>)}</span>
 }
 
@@ -145,8 +185,8 @@ export default function App() {
             </Drawer.Root>
           </div>
           <div className="absolute bottom-0 z-10 max-w-[300px] p-6 text-[14px] leading-snug text-white">
-            <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.4 }}>Hallo, I'm Bamio.</motion.p>
-            <motion.p className="text-white/75" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.5 }}>I build my ideas, ship them fast, and talk about everything web.</motion.p>
+            <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: reduced ? 0 : 2.4 }}>Hallo, I'm Bamio.</motion.p>
+            <motion.p className="text-white/75" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: reduced ? 0 : 2.5 }}>I build my ideas, ship them fast, and talk about everything web.</motion.p>
           </div>
         </section>
 
