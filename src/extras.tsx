@@ -13,7 +13,7 @@ function useInView<T extends HTMLElement>(margin = '200px') {
 
 export function Studio() {
   const { ref, seen, vis } = useInView<HTMLDivElement>()
-  return <section ref={ref} className="stagger relative mx-auto mt-6 grid max-w-[1360px] items-center gap-6 overflow-hidden rounded-[28px] bg-ink p-6 md:grid-cols-2 md:p-12">
+  return <section ref={ref} className="dark-scope stagger relative mx-auto mt-6 grid max-w-[1360px] items-center gap-6 overflow-hidden rounded-[28px] bg-ink p-6 md:grid-cols-2 md:p-12">
     <div className="relative z-10">
       <p className="reveal mb-3 text-[11px] uppercase tracking-[0.18em] text-orange">Studio</p>
       <h2 className="reveal text-[clamp(34px,5vw,72px)] font-medium leading-[0.95] text-white">Ideas in,<br />sites out.</h2>
@@ -71,7 +71,7 @@ export function DuneFooter({ children }: { children?: React.ReactNode }) {
       return () => ctx.revert()
     } catch { /* content stays visible */ }
   }, [])
-  return <section ref={ref} className="relative mx-auto mt-6 h-[640px] max-w-[1360px] overflow-hidden rounded-[28px] bg-ink">
+  return <section ref={ref} className="relative mx-auto mt-6 h-[640px] max-w-[1360px] overflow-hidden rounded-[28px] bg-ink dark-scope">
     <div className="absolute inset-0 opacity-90">{seen && <Suspense fallback={null}><Dunes active={vis} /></Suspense>}</div>
     <div className="relative z-10 flex h-full flex-col items-center justify-center px-6">
       <div className="relative flex items-center justify-center">

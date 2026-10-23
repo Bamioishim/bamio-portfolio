@@ -7,7 +7,7 @@ import { Toaster, toast } from 'sonner'
 import { Drawer } from 'vaul'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { Studio, Portal, DuneFooter } from './extras'
-import { ArrowUpRight, Menu, Mail, Bell, AtSign, Sparkles, X } from 'lucide-react'
+import { ArrowUpRight, Sun, Moon, Menu, Mail, Bell, AtSign, Sparkles, X } from 'lucide-react'
 gsap.registerPlugin(ScrollTrigger)
 const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 const spring = { type: 'spring', stiffness: 400, damping: 28 } as const
@@ -120,7 +120,7 @@ function Magnetic({ children, onClick, className }: { children: React.ReactNode;
 
 function Spotlight({ children }: { children: React.ReactNode }) {
   const [p, setP] = useState({ x: 50, y: 50, o: 0 })
-  return <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#141413] p-6"
+  return <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-card2 p-6"
     onMouseMove={e => { const r = e.currentTarget.getBoundingClientRect(); setP({ x: e.clientX - r.left, y: e.clientY - r.top, o: 1 }) }}
     onMouseLeave={() => setP(s => ({ ...s, o: 0 }))}>
     <div className="pointer-events-none absolute inset-0 transition-opacity duration-300" style={{ opacity: p.o,
@@ -142,6 +142,28 @@ const Row = ({ a, b, isNew }: { a: string; b: string; isNew?: boolean }) =>
 const Col = ({ title, children }: { title: string; children: React.ReactNode }) =>
   <div className="stagger"><h3 className="reveal mb-2 font-body text-[13px] font-medium tracking-normal text-soft">{title}</h3>{children}</div>
 
+function ThemeToggle() {
+  const [light, setLight] = useState(() => document.documentElement.classList.contains('light'))
+  const btn = useRef<HTMLButtonElement>(null)
+  const flip = () => {
+    const next = !light
+    const apply = () => { document.documentElement.classList.toggle('light', next); localStorage.setItem('theme', next ? 'light' : 'dark'); setLight(next) }
+    const d = document as Document & { startViewTransition?: (cb: () => void) => { ready: Promise<void> } }
+    if (reduced || !d.startViewTransition || !btn.current) return apply()
+    const r = btn.current.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2
+    const end = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y))
+    d.startViewTransition(apply).ready.then(() => document.documentElement.animate(
+      { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${end}px at ${x}px ${y}px)`] },
+      { duration: 520, easing: 'cubic-bezier(.76,0,.24,1)', pseudoElement: '::view-transition-new(root)' }))
+  }
+  return <button ref={btn} onClick={flip} aria-label={light ? 'Switch to dark mode' : 'Switch to light mode'} aria-pressed={light}
+    className="theme-toggle absolute md:fixed right-[80px] top-[44px] z-[75] flex h-8 w-[60px] items-center rounded-full border border-fg/15 bg-surface/80 p-[3px] backdrop-blur md:right-8 md:top-8"
+    style={{ justifyContent: light ? 'flex-end' : 'flex-start' }}>
+    <motion.span layout transition={spring} className="flex h-[24px] w-[24px] items-center justify-center rounded-full bg-orange text-ink">
+      {light ? <Sun size={13} strokeWidth={2.2} /> : <Moon size={13} strokeWidth={2.2} />}</motion.span>
+  </button>
+}
+
 export default function App() {
   useSmooth()
   const [filter, setFilter] = useState<'All' | 'Web' | 'Visual'>('All')
@@ -162,9 +184,9 @@ export default function App() {
   const shown = projects.filter(p => filter === 'All' || p.t === filter)
 
   return <>
-    <Intro /><Cursor /><div className="grain" /><Toaster theme="dark" position="bottom-center" toastOptions={{ style: { background: '#141413', border: '1px solid #2a2927', fontFamily: 'Satoshi' } }} />
+    <Intro /><Cursor /><div className="grain" /><ThemeToggle /><Toaster position="bottom-center" toastOptions={{ style: { background: 'rgb(var(--card))', color: 'rgb(var(--fg))', border: '1px solid rgb(var(--fg) / .12)', fontFamily: 'Satoshi' } }} />
     <main className="mx-auto max-w-[1360px] p-3 md:p-8">
-      <div className="overflow-hidden rounded-[28px] bg-ink p-2 shadow-2xl md:grid md:grid-cols-[minmax(320px,32%)_minmax(0,1fr)]">
+      <div className="overflow-hidden rounded-[28px] bg-surface p-2 shadow-2xl md:grid md:grid-cols-[minmax(320px,32%)_minmax(0,1fr)]">
         {/* Hero panel */}
         <section onMouseMove={e => { if (reduced) return; const r = e.currentTarget.getBoundingClientRect(); mx.set(((e.clientX - r.left) / r.width - .5) * -18); my.set(((e.clientY - r.top) / r.height - .5) * -12) }} onMouseLeave={() => { mx.set(0); my.set(0) }} className="relative h-[78vh] min-h-[520px] overflow-hidden rounded-[22px] bg-orange md:sticky md:top-2 md:h-[calc(100vh-80px)]">
           <div className="blob absolute left-1/2 top-[30%] h-[62%] w-[95%] -translate-x-1/2" aria-hidden />
@@ -174,10 +196,10 @@ export default function App() {
             <Drawer.Root>
               <Drawer.Trigger asChild><motion.button whileTap={{ scale: .97 }} aria-label="Menu" className="rounded-full bg-black/20 p-2 text-white md:hidden"><Menu size={18} /></motion.button></Drawer.Trigger>
               <Drawer.Portal><Drawer.Overlay className="fixed inset-0 z-[65] bg-black/60" />
-                <Drawer.Content className="fixed inset-x-0 bottom-0 z-[66] rounded-t-[24px] bg-[#141413] p-6 pb-10 outline-none">
-                  <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-white/20" />
-                  <Drawer.Title className="mb-4 font-display text-2xl text-white">Menu</Drawer.Title>
-                  {['Projects', 'Stack', 'Clients', 'Contact'].map(l => <Drawer.Close asChild key={l}><a href={'#' + l.toLowerCase()} className="flex items-center justify-between border-b border-white/10 py-4 text-lg text-soft">{l}<ArrowUpRight size={18} /></a></Drawer.Close>)}
+                <Drawer.Content className="fixed inset-x-0 bottom-0 z-[66] rounded-t-[24px] bg-card2 p-6 pb-10 outline-none">
+                  <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-fg/20" />
+                  <Drawer.Title className="mb-4 font-display text-2xl text-fg">Menu</Drawer.Title>
+                  {['Projects', 'Stack', 'Clients', 'Contact'].map(l => <Drawer.Close asChild key={l}><a href={'#' + l.toLowerCase()} className="flex items-center justify-between border-b border-fg/10 py-4 text-lg text-soft">{l}<ArrowUpRight size={18} /></a></Drawer.Close>)}
                   <Drawer.Close asChild><button className="mt-6 flex items-center gap-2 text-sm text-mute"><X size={14} />Drag down or tap to close</button></Drawer.Close>
                 </Drawer.Content></Drawer.Portal>
             </Drawer.Root>
@@ -199,12 +221,12 @@ export default function App() {
             })}
           </div>
 
-          <h2 className="stagger text-[clamp(40px,6vw,88px)] font-medium leading-[0.92] text-white">
+          <h2 className="stagger text-[clamp(40px,6vw,88px)] font-medium leading-[0.92] text-fg">
             <span className="reveal block">Websites that</span><span className="reveal block text-orange">feel good to touch.</span></h2>
 
-          <div className="stagger grid grid-cols-3 gap-4 border-y border-white/10 py-8">
+          <div className="stagger grid grid-cols-3 gap-4 border-y border-fg/10 py-8">
             {[[12, '+', 'Projects shipped'], [7, '', 'Hackathons'], [100, '%', 'Hand-tuned motion']].map(([n, s, l]) =>
-              <div key={l as string} className="reveal"><div className="font-display text-[clamp(32px,4vw,56px)] font-medium tracking-tight text-white"><Counter to={n as number} suffix={s as string} /></div><div className="text-[12px] text-mute">{l}</div></div>)}
+              <div key={l as string} className="reveal"><div className="font-display text-[clamp(32px,4vw,56px)] font-medium tracking-tight text-fg"><Counter to={n as number} suffix={s as string} /></div><div className="text-[12px] text-mute">{l}</div></div>)}
           </div>
 
           <div id="projects" className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3">
@@ -212,7 +234,7 @@ export default function App() {
               <div className="reveal mb-3 flex items-center gap-2">
                 <h3 className="mr-auto font-body text-[13px] font-medium tracking-normal text-soft">Projects</h3>
                 {(['All', 'Web', 'Visual'] as const).map(f => <motion.button key={f} onClick={() => setFilter(f)} whileTap={{ scale: .97 }} transition={spring}
-                  className={`rounded-full px-2.5 py-0.5 text-[11px] transition-colors duration-200 ${filter === f ? 'bg-orange text-ink' : 'bg-white/5 text-mute hover:text-soft'}`}>{f}</motion.button>)}
+                  className={`rounded-full px-2.5 py-0.5 text-[11px] transition-colors duration-200 ${filter === f ? 'bg-orange text-ink' : 'bg-fg/5 text-mute hover:text-soft'}`}>{f}</motion.button>)}
               </div>
               <div ref={listRef}>{shown.map(p => <Row key={p.n} a={p.n} b={p.y} isNew={p.isNew} />)}</div>
             </div>
@@ -221,7 +243,7 @@ export default function App() {
             <Col title="Features">{features.map(([a, b]) => <Row key={a} a={a} b={b} />)}</Col>
             <div className="stagger lg:col-span-2"><div className="reveal">
               <Spotlight><p className="mb-1 text-[11px] uppercase tracking-[0.18em] text-orange">Currently</p>
-                <h3 className="mb-2 text-2xl font-medium text-white">Soft Landing</h3>
+                <h3 className="mb-2 text-2xl font-medium text-fg">Soft Landing</h3>
                 <p className="max-w-md text-[14px] text-mute">A relocation guide that matches you with neighbourhoods and places that fit your taste. Move your mouse over this card.</p>
                 <a href="https://softlandingapp.lovable.app" className="mt-4 inline-flex items-center gap-1 text-[13px] text-soft hover:text-orange">Visit site <ArrowUpRight size={14} /></a></Spotlight></div></div>
           </div>
@@ -229,9 +251,9 @@ export default function App() {
           <div id="clients" className="stagger"><h3 className="reveal mb-4 font-body text-[13px] font-medium tracking-normal text-soft">Clients &amp; collabs</h3>
             <div className="reveal relative overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_10%,#000_90%,transparent)]">
               <div className="marquee flex w-max gap-12">{[...clients, ...clients].map((c, i) =>
-                <span key={i} className="font-display text-[clamp(28px,3.5vw,44px)] font-medium text-white/80 hover:text-orange transition-colors duration-200">{c}</span>)}</div></div></div>
+                <span key={i} className="font-display text-[clamp(28px,3.5vw,44px)] font-medium text-fg/80 hover:text-orange transition-colors duration-200">{c}</span>)}</div></div></div>
 
-          <div id="contact" className="flex flex-col items-start justify-between gap-6 border-t border-white/10 pt-8 sm:flex-row sm:items-end">
+          <div id="contact" className="flex flex-col items-start justify-between gap-6 border-t border-fg/10 pt-8 sm:flex-row sm:items-end">
             <p className="max-w-xs text-[13px] text-mute">Have a business with no site, or one that feels stiff? Let's fix that.</p>
             <Magnetic onClick={book} className="shimmer rounded-full bg-orange px-6 py-3 text-[14px] font-medium text-ink">
               <span className="relative z-10 flex items-center gap-2">Book a session <ArrowUpRight size={16} /></span></Magnetic>
