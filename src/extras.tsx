@@ -1,3 +1,4 @@
+import { BODY, LIT, SHAPE_T } from './bamio-shape'
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -42,7 +43,7 @@ export function Portal() {
     <div className="absolute inset-0 flex items-center justify-center">
       <p className="absolute top-10 text-[11px] uppercase tracking-[0.18em] text-ink/70">Scroll to step inside</p>
       <svg ref={head} viewBox="0 0 400 520" className="h-[70vh] will-change-transform" aria-hidden>
-        <path fill="#140904" d="M175 60c48-8 92 22 98 74 4 30-2 52 8 70 8 14 2 24-8 26l-2 30c-2 18-16 26-34 26l-4 46c60 10 120 40 152 80 14 18 20 60 20 108H-15c0-50 8-90 24-108 32-36 92-66 148-78l2-58c-30-20-52-56-54-100-2-60 24-108 70-116z" />
+        <g transform={SHAPE_T}><path fill="#140904" d={BODY} /><path fill="#3a1608" d={LIT} /></g>
       </svg>
     </div>
     <div ref={world} className="absolute inset-0 flex items-center justify-center" style={{ clipPath: 'circle(0% at 50% 38%)',

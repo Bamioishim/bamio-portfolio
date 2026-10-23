@@ -21,7 +21,7 @@ const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-red
 
 function Head() {
   const ref = useRef<THREE.Points>(null)
-  const { pos, col } = useMemo(() => avatarPoints(1), [])
+  const { pos, col } = useMemo(() => avatarPoints(mobile ? 2 : 1), [mobile])
   useFrame(({ pointer, clock }) => {
     const p = ref.current; if (!p) return
     const t = reduced ? 0 : clock.elapsedTime
@@ -30,7 +30,7 @@ function Head() {
   })
   return <points ref={ref}>
     <bufferGeometry><bufferAttribute attach="attributes-position" args={[pos, 3]} /><bufferAttribute attach="attributes-color" args={[col, 3]} /></bufferGeometry>
-    <pointsMaterial vertexColors size={mobile ? 0.02 : 0.014} sizeAttenuation transparent opacity={0.95} depthWrite={false} />
+    <pointsMaterial vertexColors size={mobile ? 0.024 : 0.014} sizeAttenuation transparent opacity={0.95} depthWrite={false} />
   </points>
 }
 

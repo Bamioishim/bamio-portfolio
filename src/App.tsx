@@ -1,3 +1,4 @@
+import { BODY, LIT, SHAPE_T } from './bamio-shape'
 import { useEffect, useRef, useState } from 'react'
 import Lenis from 'lenis'
 import gsap from 'gsap'
@@ -141,7 +142,7 @@ function Spotlight({ children }: { children: React.ReactNode }) {
 function Silhouette() {
   return <svg viewBox="0 0 400 520" className="absolute bottom-0 left-1/2 w-[115%] -translate-x-1/2" aria-hidden>
     <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stopColor="#1a0d07"/><stop offset=".7" stopColor="#120905"/><stop offset="1" stopColor="#3a1608"/></linearGradient></defs>
-    <path fill="url(#g)" d="M175 60c48-8 92 22 98 74 4 30-2 52 8 70 8 14 2 24-8 26l-2 30c-2 18-16 26-34 26l-4 46c60 10 120 40 152 80 14 18 20 60 20 108H-15c0-50 8-90 24-108 32-36 92-66 148-78l2-58c-30-20-52-56-54-100-2-60 24-108 70-116z"/></svg>
+    <g transform={SHAPE_T}><path fill="url(#g)" d={BODY}/><path fill="#6a2a10" opacity=".5" d={LIT}/></g></svg>
 }
 
 const Row = ({ a, b, isNew, href = '#' }: { a: string; b: string; isNew?: boolean; href?: string }) =>
