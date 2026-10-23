@@ -7,6 +7,7 @@ import { Toaster, toast } from 'sonner'
 import { Drawer } from 'vaul'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { Studio, Portal, DuneFooter } from './extras'
+import { Mark } from './logo'
 import { ArrowUpRight, Sun, Moon, Menu, Mail, Bell, AtSign, Sparkles, X } from 'lucide-react'
 gsap.registerPlugin(ScrollTrigger)
 const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -57,13 +58,16 @@ function Intro() {
     const done = () => { document.documentElement.style.overflow = ''; setShow(false) }
     const tl = gsap.timeline({ onComplete: done })
     tl.set(q('.il'), { yPercent: 115, rotate: 6 })
-      .to(q('.il'), { yPercent: 0, rotate: 0, duration: 0.75, ease: 'back.out(1.6)', stagger: 0.06 }, 0.1)
+      .fromTo(q('.shard-top'), { x: -70, y: -70, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.6, ease: 'expo.out' }, 0.05)
+      .fromTo(q('.shard-bot'), { x: 70, y: 70, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.6, ease: 'expo.out' }, 0.12)
+      .to(q('.il'), { yPercent: 0, rotate: 0, duration: 0.75, ease: 'back.out(1.6)', stagger: 0.06 }, 0.45)
       .to(n, { v: 100, duration: 1.45, ease: 'power2.inOut', onUpdate: () => { const e = q('.icount')[0]; if (e) e.textContent = String(Math.round(n.v)).padStart(3, '0') } }, 0)
       .fromTo(q('.ibar'), { scaleX: 0 }, { scaleX: 1, duration: 1.45, ease: 'power2.inOut' }, 0)
       .fromTo(q('.iline'), { yPercent: 100, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, 0.45)
       .fromTo(q('.imeta'), { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.05 }, 0.2)
       .addLabel('out', 1.6)
       .to(q('.il'), { yPercent: -115, duration: 0.45, ease: 'power3.in', stagger: 0.03 }, 'out')
+      .to(q('.imark'), { opacity: 0, scale: .9, duration: 0.35, ease: 'power3.in' }, 'out')
       .to(q('.ifade'), { opacity: 0, duration: 0.3 }, 'out')
       .to(q('.itop'), { yPercent: -100, duration: 0.7, ease: 'expo.inOut' }, 'out+=0.25')
       .to(q('.ibot'), { yPercent: 100, duration: 0.7, ease: 'expo.inOut' }, 'out+=0.25')
@@ -78,6 +82,7 @@ function Intro() {
     <div className="relative z-[2] flex h-full flex-col justify-between p-5 md:p-8">
       <div className="ifade flex justify-between text-[11px] uppercase tracking-[.2em]"><span className="imeta">Portfolio — ©2026</span><span className="imeta">Available — 2026</span></div>
       <div className="flex flex-col items-center">
+        <Mark className="imark mb-5 h-[16vw] w-[16vw] overflow-visible md:mb-6 md:h-[9vw] md:w-[9vw]" top="#111111" bot="#F3EEE6" />
         <div className="relative">
           <h1 className="flex overflow-hidden text-[24vw] font-semibold leading-[.82] tracking-[-.06em] md:text-[17vw]">{'BAMIO'.split('').map((c, i) => <span key={i} className="il inline-block">{c}</span>)}</h1>
         </div>
@@ -192,7 +197,7 @@ export default function App() {
           <div className="blob absolute left-1/2 top-[30%] h-[62%] w-[95%] -translate-x-1/2" aria-hidden />
           <div ref={heroImg} className="absolute inset-0"><motion.div className="absolute inset-0" style={{ x: px, y: py }}><Silhouette /></motion.div></div>
           <div className="relative z-10 flex items-center justify-between p-6">
-            <h1 className="text-[28px] font-semibold leading-none text-white"><SplitText text="BAMIO" /></h1>
+            <h1 className="flex items-center gap-2.5 text-[28px] font-semibold leading-none text-white"><span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-surface text-fg shadow-sm"><Mark className="h-[22px] w-[22px]" /></span><SplitText text="BAMIO" /></h1>
             <Drawer.Root>
               <Drawer.Trigger asChild><motion.button whileTap={{ scale: .97 }} aria-label="Menu" className="rounded-full bg-black/20 p-2 text-white md:hidden"><Menu size={18} /></motion.button></Drawer.Trigger>
               <Drawer.Portal><Drawer.Overlay className="fixed inset-0 z-[65] bg-black/60" />
