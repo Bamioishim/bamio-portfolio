@@ -3,13 +3,13 @@ import Lenis from 'lenis'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
-import { Toaster, toast } from 'sonner'
+import { Toaster } from 'sonner'
 import { Drawer } from 'vaul'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { Studio, Portal, DuneFooter } from './extras'
 import { Mark } from './logo'
 import { Chapters } from './chapters'
-import { ArrowUpRight, Sun, Moon, Menu, Mail, Bell, AtSign, Sparkles, X } from 'lucide-react'
+import { ArrowUpRight, ArrowDownRight, Sun, Moon, Menu, X } from 'lucide-react'
 gsap.registerPlugin(ScrollTrigger)
 const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 const spring = { type: 'spring', stiffness: 400, damping: 28 } as const
@@ -22,7 +22,11 @@ const projects = [
 ]
 const stack = [['Lovable','Web build'],['Manus','Web build'],['Render','Hosting'],['GitHub','Code'],['GSAP','Motion'],['Lenis','Scroll'],['Figma','Visual design'],['Replit','Web build']]
 const features = [['Builder Weekly',"'26"],['Tech Notes',"'25"],['Devpost Picks',"'26"],['Design Daily',"'25"]]
-const channels = [['X','Visual design'],['LinkedIn','Web design'],['GitHub','Code'],['TikTok','Visual design'],['Instagram','Visual design']]
+const channels = [['X','@bamio_xZ','https://x.com/bamio_xZ'],['Telegram','@bamio_xZ','https://t.me/bamio_xZ'],['Email','bamio6467@gmail.com','mailto:bamio6467@gmail.com']]
+const BOOK = 'mailto:bamio6467@gmail.com?subject=Booking%20a%20session'
+const SOCIALS = [['X', 'https://x.com/bamio_xZ', '@bamio_xZ'], ['Telegram', 'https://t.me/bamio_xZ', '@bamio_xZ'], ['Email', 'mailto:bamio6467@gmail.com', 'bamio6467@gmail.com']]
+const short = (v: string) => v.includes('@gmail') ? 'Email me' : v
+const SERVICES = ['Web design & builds', 'Brand design', 'Posters', 'Video']
 const clients = ['Qloo','Sui','Hydra','Burrowpad','IBNAi','OmniRush','Aqua0','Data Labs']
 
 function useSmooth() {
@@ -140,8 +144,8 @@ function Silhouette() {
     <path fill="url(#g)" d="M175 60c48-8 92 22 98 74 4 30-2 52 8 70 8 14 2 24-8 26l-2 30c-2 18-16 26-34 26l-4 46c60 10 120 40 152 80 14 18 20 60 20 108H-15c0-50 8-90 24-108 32-36 92-66 148-78l2-58c-30-20-52-56-54-100-2-60 24-108 70-116z"/></svg>
 }
 
-const Row = ({ a, b, isNew }: { a: string; b: string; isNew?: boolean }) =>
-  <motion.a href="#" className="reveal group flex items-center justify-between gap-4 py-[3px] text-[13px] text-mute hover:text-soft" whileHover={{ x: 4 }} transition={spring}>
+const Row = ({ a, b, isNew, href = '#' }: { a: string; b: string; isNew?: boolean; href?: string }) =>
+  <motion.a href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noreferrer" className="reveal group flex items-center justify-between gap-4 py-[3px] text-[13px] text-mute hover:text-soft" whileHover={{ x: 4 }} transition={spring}>
     <span className="flex items-center gap-2">{a}{isNew && <span className="rounded bg-orange/20 px-1 text-[9px] uppercase text-orange">new</span>}</span>
     <span className="text-mute/70">{b}</span></motion.a>
 
@@ -186,7 +190,6 @@ export default function App() {
     })
     return () => ctx.revert()
   }, [])
-  const book = () => toast('Session request received', { description: 'BAMIO will reply within 24 hours.', icon: <Sparkles size={16} /> })
   const shown = projects.filter(p => filter === 'All' || p.t === filter)
 
   return <>
@@ -218,13 +221,23 @@ export default function App() {
 
         {/* Right side */}
         <section className="relative flex min-w-0 flex-col gap-16 p-5 pt-8 md:p-10">
-          <div className="stagger grid grid-cols-1 gap-6 sm:grid-cols-3">
-            {[[Mail, 'Got a question?', 'Get in touch'], [Bell, 'Stay in the loop', 'Subscribe'], [AtSign, "I'm on socials", 'Follow me on x.com']].map(([I, a, b]) => {
-              const Icon = I as typeof Mail
-              return <motion.a key={a as string} href="#" className="reveal group block" whileHover={{ y: -2 }} transition={spring}>
-                <span className="flex items-center gap-2 text-[13px] text-soft"><Icon size={13} className="text-orange" />{a as string}</span>
-                <span className="text-[13px] text-mute group-hover:text-orange transition-colors duration-200">{b as string}</span></motion.a>
-            })}
+          <div className="stagger grid grid-cols-1 gap-x-6 gap-y-7 border-b sm:grid-cols-2 border-fg/10 pb-8 lg:grid-cols-4">
+            <motion.a href={BOOK} className="reveal group block" whileHover={{ y: -2 }} transition={spring}>
+              <span className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-mute"><span className="font-display text-orange">01</span>Book</span>
+              <span className="mt-1.5 flex items-center gap-1 font-display text-[19px] font-medium text-fg group-hover:text-orange transition-colors duration-200">Book a session<ArrowUpRight size={16} className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /></span>
+              <span className="text-[12px] text-mute">Tell me the idea, I reply fast.</span></motion.a>
+            <div className="reveal">
+              <span className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-mute"><span className="font-display text-orange">02</span>Socials</span>
+              <div className="mt-1.5 flex flex-col gap-0.5 text-[13px]">
+                {SOCIALS.map(([n, h, v]) => <a key={n} href={h} target={h.startsWith('http') ? '_blank' : undefined} rel="noreferrer" className="group flex items-baseline gap-2 text-soft hover:text-orange transition-colors duration-200">
+                  <span className="w-[62px] text-mute">{n}</span><span className="truncate" title={v}>{short(v)}</span></a>)}</div></div>
+            <motion.a href="#chapters" onClick={e => { e.preventDefault(); document.getElementById('chapters')?.scrollIntoView({ behavior: 'smooth' }) }} className="reveal group block" whileHover={{ y: -2 }} transition={spring}>
+              <span className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-mute"><span className="font-display text-orange">03</span>Work</span>
+              <span className="mt-1.5 flex items-center gap-1 font-display text-[19px] font-medium text-fg group-hover:text-orange transition-colors duration-200">View portfolio<ArrowDownRight size={16} /></span>
+              <span className="text-[12px] text-mute">Five chapters, newest first.</span></motion.a>
+            <div className="reveal">
+              <span className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-mute"><span className="font-display text-orange">04</span>Services</span>
+              <ul className="mt-1.5 flex flex-wrap gap-1.5">{SERVICES.map(s => <li key={s} className="rounded-full border border-fg/15 px-2.5 py-0.5 text-[12px] text-soft">{s}</li>)}</ul></div>
           </div>
 
           <h2 className="stagger text-[clamp(40px,6vw,88px)] font-medium leading-[0.92] text-fg">
@@ -245,7 +258,7 @@ export default function App() {
               <div ref={listRef}>{shown.map(p => <Row key={p.n} a={p.n} b={p.y} isNew={p.isNew} />)}</div>
             </div>
             <Col title="Stack">{stack.map(([a, b]) => <Row key={a} a={a} b={b} />)}</Col>
-            <Col title="Channels">{channels.map(([a, b]) => <Row key={a} a={a} b={b} />)}</Col>
+            <Col title="Channels">{channels.map(([a, b, h]) => <Row key={a} a={a} b={b} href={h} />)}</Col>
             <Col title="Features">{features.map(([a, b]) => <Row key={a} a={a} b={b} />)}</Col>
             <div className="stagger lg:col-span-2"><div className="reveal">
               <Spotlight><p className="mb-1 text-[11px] uppercase tracking-[0.18em] text-orange">Currently</p>
@@ -261,7 +274,7 @@ export default function App() {
 
           <div id="contact" className="flex flex-col items-start justify-between gap-6 border-t border-fg/10 pt-8 sm:flex-row sm:items-end">
             <p className="max-w-xs text-[13px] text-mute">Have a business with no site, or one that feels stiff? Let's fix that.</p>
-            <Magnetic onClick={book} className="shimmer rounded-full bg-orange px-6 py-3 text-[14px] font-medium text-ink">
+            <Magnetic onClick={() => { location.href = BOOK }} className="shimmer rounded-full bg-orange px-6 py-3 text-[14px] font-medium text-ink">
               <span className="relative z-10 flex items-center gap-2">Book a session <ArrowUpRight size={16} /></span></Magnetic>
           </div>
         </section>

@@ -1,46 +1,36 @@
 import { useMemo, useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import avatar from './avatar-points.json'
+
+// Bamio's likeness sampled from the cleaned avatar: [x, y, z, brightness] per dot
+function avatarPoints(step: number) {
+  const a = avatar as number[], n = Math.floor(a.length / 4 / step)
+  const pos = new Float32Array(n * 3), col = new Float32Array(n * 3)
+  const base = new THREE.Color('#FF5A1F')
+  for (let i = 0; i < n; i++) {
+    const j = i * step * 4, b = a[j + 3]
+    pos.set([a[j] + (Math.random() - .5) * .006, a[j + 1], a[j + 2] + (Math.random() - .5) * .04], i * 3)
+    col.set([base.r * b, base.g * b, base.b * b], i * 3)
+  }
+  return { pos, col }
+}
 
 const mobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches
 const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-function headPoints(n: number) {
-  const out: number[] = []
-  const rnd = () => Math.random() * 2 - 1
-  while (out.length / 3 < n) {
-    const x = rnd(), y = rnd(), z = rnd()
-    const r = Math.hypot(x, y, z); if (r === 0) continue
-    const ux = x / r, uy = y / r, uz = z / r
-    const part = Math.random()
-    if (part < 0.62) { // skull/face shell
-      let px = ux * 0.78, py = uy * 1.0 + 0.55, pz = uz * 0.9
-      if (uz > 0.55 && uy > -0.3 && uy < 0.2) pz += 0.12 * (1 - Math.abs(uy + 0.05) * 4) * (1 - Math.abs(ux) * 3) // nose
-      if (uy < -0.2) { px *= 0.85 + uy * 0.2; pz *= 0.9 } // jaw taper
-      out.push(px, py, pz)
-    } else if (part < 0.75) { // neck
-      const a = Math.random() * Math.PI * 2, h = Math.random()
-      out.push(Math.cos(a) * 0.36, -0.35 - h * 0.55, Math.sin(a) * 0.34)
-    } else { // shoulders
-      const a = Math.random() * Math.PI * 2, s = Math.random()
-      out.push(Math.cos(a) * (0.5 + s * 1.2), -0.95 - s * s * 0.5 + Math.random() * 0.05, Math.sin(a) * 0.45)
-    }
-  }
-  return new Float32Array(out)
-}
-
 function Head() {
   const ref = useRef<THREE.Points>(null)
-  const pos = useMemo(() => headPoints(mobile ? 3500 : 9000), [])
+  const { pos, col } = useMemo(() => avatarPoints(1), [])
   useFrame(({ pointer, clock }) => {
     const p = ref.current; if (!p) return
     const t = reduced ? 0 : clock.elapsedTime
-    p.rotation.y = THREE.MathUtils.lerp(p.rotation.y, Math.sin(t * 0.15) * 0.5 + pointer.x * 0.5, 0.04)
+    p.rotation.y = THREE.MathUtils.lerp(p.rotation.y, Math.sin(t * 0.15) * 0.3 + pointer.x * 0.3, 0.04)
     p.rotation.x = THREE.MathUtils.lerp(p.rotation.x, -pointer.y * 0.2, 0.04)
   })
   return <points ref={ref}>
-    <bufferGeometry><bufferAttribute attach="attributes-position" args={[pos, 3]} /></bufferGeometry>
-    <pointsMaterial color="#FF5A1F" size={mobile ? 0.022 : 0.016} sizeAttenuation transparent opacity={0.8} blending={THREE.AdditiveBlending} depthWrite={false} />
+    <bufferGeometry><bufferAttribute attach="attributes-position" args={[pos, 3]} /><bufferAttribute attach="attributes-color" args={[col, 3]} /></bufferGeometry>
+    <pointsMaterial vertexColors size={mobile ? 0.02 : 0.014} sizeAttenuation transparent opacity={0.95} depthWrite={false} />
   </points>
 }
 
