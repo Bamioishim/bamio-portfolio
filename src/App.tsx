@@ -8,6 +8,7 @@ import { Drawer } from 'vaul'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { Studio, Portal, DuneFooter } from './extras'
 import { Mark } from './logo'
+import { Chapters } from './chapters'
 import { ArrowUpRight, Sun, Moon, Menu, Mail, Bell, AtSign, Sparkles, X } from 'lucide-react'
 gsap.registerPlugin(ScrollTrigger)
 const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -265,6 +266,7 @@ export default function App() {
           </div>
         </section>
       </div>
+      <Chapters />
       <Studio />
     </main>
     <Portal />
