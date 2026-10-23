@@ -6,6 +6,7 @@ import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motio
 import { Toaster, toast } from 'sonner'
 import { Drawer } from 'vaul'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
+import { Studio, Portal, DuneFooter } from './extras'
 import { ArrowUpRight, Menu, Mail, Bell, AtSign, Sparkles, X } from 'lucide-react'
 gsap.registerPlugin(ScrollTrigger)
 const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -108,6 +109,8 @@ export default function App() {
   const [filter, setFilter] = useState<'All' | 'Web' | 'Visual'>('All')
   const [listRef] = useAutoAnimate<HTMLDivElement>()
   const heroImg = useRef<HTMLDivElement>(null)
+  const mx = useMotionValue(0), my = useMotionValue(0)
+  const px = useSpring(mx, { stiffness: 80, damping: 20 }), py = useSpring(my, { stiffness: 80, damping: 20 })
   useEffect(() => {
     if (reduced) return
     const ctx = gsap.context(() => {
@@ -125,8 +128,9 @@ export default function App() {
     <main className="mx-auto max-w-[1360px] p-3 md:p-8">
       <div className="overflow-hidden rounded-[28px] bg-ink p-2 shadow-2xl md:grid md:grid-cols-[minmax(320px,32%)_minmax(0,1fr)]">
         {/* Hero panel */}
-        <section className="relative h-[78vh] min-h-[520px] overflow-hidden rounded-[22px] bg-orange md:sticky md:top-2 md:h-[calc(100vh-80px)]">
-          <div ref={heroImg} className="absolute inset-0"><Silhouette /></div>
+        <section onMouseMove={e => { if (reduced) return; const r = e.currentTarget.getBoundingClientRect(); mx.set(((e.clientX - r.left) / r.width - .5) * -18); my.set(((e.clientY - r.top) / r.height - .5) * -12) }} onMouseLeave={() => { mx.set(0); my.set(0) }} className="relative h-[78vh] min-h-[520px] overflow-hidden rounded-[22px] bg-orange md:sticky md:top-2 md:h-[calc(100vh-80px)]">
+          <div className="blob absolute left-1/2 top-[30%] h-[62%] w-[95%] -translate-x-1/2" aria-hidden />
+          <div ref={heroImg} className="absolute inset-0"><motion.div className="absolute inset-0" style={{ x: px, y: py }}><Silhouette /></motion.div></div>
           <div className="relative z-10 flex items-center justify-between p-6">
             <h1 className="text-[28px] font-semibold leading-none text-white"><SplitText text="BAMIO" /></h1>
             <Drawer.Root>
@@ -194,9 +198,11 @@ export default function App() {
             <Magnetic onClick={book} className="shimmer rounded-full bg-orange px-6 py-3 text-[14px] font-medium text-ink">
               <span className="relative z-10 flex items-center gap-2">Book a session <ArrowUpRight size={16} /></span></Magnetic>
           </div>
-          <p className="text-[11px] text-mute/60">© 2026 BAMIO. Placeholder content.</p>
         </section>
       </div>
+      <Studio />
     </main>
+    <Portal />
+    <div className="p-3 md:p-8"><DuneFooter><p className="mt-8 text-[11px] text-mute/70">© 2026 BAMIO. Placeholder content.</p></DuneFooter></div>
   </>
 }

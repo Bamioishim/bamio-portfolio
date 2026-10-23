@@ -15,3 +15,10 @@ h1,h2,h3{font-family:"Clash Display",sans-serif;letter-spacing:-0.035em}
 @media (hover:none){.cursor-dot{display:none}}
 @media (hover:hover){body,a,button{cursor:none}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.halo{border:1px solid rgba(255,90,31,.55);box-shadow:0 0 24px rgba(255,90,31,.25),inset 0 0 24px rgba(255,90,31,.12);animation:halo 9s ease-in-out infinite}
+.halo::after{content:"";position:absolute;inset:-1px;border-radius:9999px;background:conic-gradient(from var(--a),transparent 0deg,rgba(255,140,80,.9) 30deg,transparent 70deg);
+ -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 1px));mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 1px));animation:spin 8s linear infinite}
+@keyframes halo{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.04);opacity:1}}
+.blob{background:radial-gradient(circle at 35% 35%,#FF7A3D,#C93E0E 70%);opacity:.55;animation:blob 16s ease-in-out infinite}
+@keyframes blob{0%,100%{border-radius:42% 58% 63% 37%/45% 41% 59% 55%;transform:rotate(0)}33%{border-radius:61% 39% 44% 56%/58% 62% 38% 42%;transform:rotate(40deg)}66%{border-radius:37% 63% 52% 48%/39% 47% 53% 61%;transform:rotate(-25deg)}}
+@media (max-width:767px){.blob{animation-duration:24s}.halo::after{animation:none}}
