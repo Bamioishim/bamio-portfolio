@@ -58,19 +58,35 @@ export function Portal() {
 
 export function DuneFooter({ children }: { children?: React.ReactNode }) {
   const { ref, seen, vis } = useInView<HTMLElement>()
-  const word = useRef<HTMLHeadingElement>(null)
+  const word = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    if (reduced) return
-    const ctx = gsap.context(() => gsap.from(word.current!.querySelectorAll('span'), { yPercent: 110, stagger: 0.06, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: word.current, start: 'top 85%' } }))
-    return () => ctx.revert()
+    if (reduced || !word.current) return
+    try {
+      const ctx = gsap.context(() => {
+        const tl = gsap.timeline({ scrollTrigger: { trigger: word.current, start: 'top 85%' } })
+        tl.from(word.current!.querySelectorAll('.sl'), { yPercent: 105, duration: 1, stagger: 0.08, ease: 'power3.out' })
+          .fromTo(word.current!.querySelector('.sig'), { strokeDashoffset: 900, fillOpacity: 0 }, { strokeDashoffset: 0, duration: 1.8, ease: 'power2.inOut' }, '-=0.4')
+          .to(word.current!.querySelector('.sig'), { fillOpacity: 1, duration: 0.6 }, '-=0.3')
+      }, word)
+      return () => ctx.revert()
+    } catch { /* content stays visible */ }
   }, [])
   return <section ref={ref} className="relative mx-auto mt-6 h-[640px] max-w-[1360px] overflow-hidden rounded-[28px] bg-ink">
     <div className="absolute inset-0 opacity-90">{seen && <Suspense fallback={null}><Dunes active={vis} /></Suspense>}</div>
     <div className="relative z-10 flex h-full flex-col items-center justify-center px-6">
       <div className="relative flex items-center justify-center">
         <div className="halo absolute aspect-square w-[min(78vw,520px)] rounded-full" aria-hidden />
-        <h2 ref={word} className="relative overflow-hidden text-[clamp(64px,16vw,220px)] font-semibold leading-none text-white">
-          {'BAMIO'.split('').map((c, i) => <span key={i} className="inline-block">{c}</span>)}</h2>
+        <div ref={word} className="relative text-center">
+          <p className="mb-5 text-[11px] uppercase tracking-[0.22em] text-mute">Lagos · Available 2026</p>
+          <h2 className="font-serifd text-[clamp(44px,8.5vw,112px)] italic leading-[0.95] tracking-[-0.02em] text-white" style={{ fontFamily: '"Instrument Serif", Georgia, serif', fontWeight: 400 }}>
+            <span className="block overflow-hidden pb-1"><span className="sl block">Let's build</span></span>
+            <span className="block overflow-hidden pb-2"><span className="sl block">something <span className="text-orange">good.</span></span></span>
+          </h2>
+          <svg viewBox="0 0 300 110" className="mx-auto mt-4 h-[70px] w-[200px] md:h-[90px] md:w-[250px]" aria-label="Bamio signature">
+            <text className="sig" x="150" y="78" textAnchor="middle" fill="#D9D6CF" stroke="#D9D6CF" strokeWidth="0.8" strokeDasharray="900" strokeDashoffset="0"
+              style={{ fontFamily: '"Mrs Saint Delafield", "Snell Roundhand", cursive', fontSize: 84 }}>Bamio</text>
+          </svg>
+        </div>
       </div>
       {children}
     </div>
