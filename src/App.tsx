@@ -1,4 +1,3 @@
-import { BODY, LIT, SHAPE_T } from './bamio-shape'
 import { useEffect, useRef, useState } from 'react'
 import Lenis from 'lenis'
 import gsap from 'gsap'
@@ -24,20 +23,25 @@ const projects = [
 const stack = [['Lovable','Web build'],['Manus','Web build'],['Render','Hosting'],['GitHub','Code'],['GSAP','Motion'],['Lenis','Scroll'],['Figma','Visual design'],['Replit','Web build']]
 const features = [['Builder Weekly',"'26"],['Tech Notes',"'25"],['Devpost Picks',"'26"],['Design Daily',"'25"]]
 const channels = [['X','@bamio_xZ','https://x.com/bamio_xZ'],['Telegram','@bamio_xZ','https://t.me/bamio_xZ'],['Email','bamio6467@gmail.com','mailto:bamio6467@gmail.com']]
-const BOOK = 'mailto:bamio6467@gmail.com?subject=Booking%20a%20session'
+const BOOK_MAIL = 'mailto:bamio6467@gmail.com?subject=Booking%20a%20session'
+const BOOK_GMAIL = 'https://mail.google.com/mail/?view=cm&fs=1&to=bamio6467@gmail.com&su=Booking%20a%20session'
+const isMobileUA = () => /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
+function book(e?: { preventDefault(): void }) { e?.preventDefault(); if (isMobileUA()) location.href = BOOK_MAIL; else window.open(BOOK_GMAIL, '_blank', 'noopener') }
+let lenisRef: Lenis | null = null
+function goTo(id: string, e?: { preventDefault(): void }) { e?.preventDefault(); const el = document.getElementById(id); if (!el) return
+  if (lenisRef) lenisRef.scrollTo(el, { offset: -16, duration: 1.4 }); else el.scrollIntoView({ behavior: 'smooth' }) }
 const SOCIALS = [['X', 'https://x.com/bamio_xZ', '@bamio_xZ'], ['Telegram', 'https://t.me/bamio_xZ', '@bamio_xZ'], ['Email', 'mailto:bamio6467@gmail.com', 'bamio6467@gmail.com']]
-const short = (v: string) => v.includes('@gmail') ? 'Email me' : v
 const SERVICES = ['Web design & builds', 'Brand design', 'Posters', 'Video']
 const clients = ['Qloo','Sui','Hydra','Burrowpad','IBNAi','OmniRush','Aqua0','Data Labs']
 
 function useSmooth() {
   useEffect(() => {
     if (reduced) return
-    const lenis = new Lenis({ lerp: 0.09 })
+    const lenis = new Lenis({ lerp: 0.09 }); lenisRef = lenis
     lenis.on('scroll', ScrollTrigger.update)
     const tick = (t: number) => lenis.raf(t * 1000)
     gsap.ticker.add(tick); gsap.ticker.lagSmoothing(0)
-    return () => { gsap.ticker.remove(tick); lenis.destroy() }
+    return () => { gsap.ticker.remove(tick); lenis.destroy(); lenisRef = null }
   }, [])
 }
 
@@ -142,7 +146,7 @@ function Spotlight({ children }: { children: React.ReactNode }) {
 function Silhouette() {
   return <svg viewBox="0 0 400 520" className="absolute bottom-0 left-1/2 w-[115%] -translate-x-1/2" aria-hidden>
     <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stopColor="#1a0d07"/><stop offset=".7" stopColor="#120905"/><stop offset="1" stopColor="#3a1608"/></linearGradient></defs>
-    <g transform={SHAPE_T}><path fill="url(#g)" d={BODY}/><path fill="#6a2a10" opacity=".5" d={LIT}/></g></svg>
+    <path fill="url(#g)" d="M175 60c48-8 92 22 98 74 4 30-2 52 8 70 8 14 2 24-8 26l-2 30c-2 18-16 26-34 26l-4 46c60 10 120 40 152 80 14 18 20 60 20 108H-15c0-50 8-90 24-108 32-36 92-66 148-78l2-58c-30-20-52-56-54-100-2-60 24-108 70-116z"/></svg>
 }
 
 const Row = ({ a, b, isNew, href = '#' }: { a: string; b: string; isNew?: boolean; href?: string }) =>
@@ -209,7 +213,7 @@ export default function App() {
                 <Drawer.Content className="fixed inset-x-0 bottom-0 z-[66] rounded-t-[24px] bg-card2 p-6 pb-10 outline-none">
                   <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-fg/20" />
                   <Drawer.Title className="mb-4 font-display text-2xl text-fg">Menu</Drawer.Title>
-                  {['Projects', 'Stack', 'Clients', 'Contact'].map(l => <Drawer.Close asChild key={l}><a href={'#' + l.toLowerCase()} className="flex items-center justify-between border-b border-fg/10 py-4 text-lg text-soft">{l}<ArrowUpRight size={18} /></a></Drawer.Close>)}
+                  {([['Work', 'chapters'], ['Services', 'services'], ['Socials', 'socials'], ['Projects', 'projects']] as const).map(([l, id]) => <Drawer.Close asChild key={l}><a href={'#' + id} onClick={e => { e.preventDefault(); setTimeout(() => goTo(id), 350) }} className="flex items-center justify-between border-b border-fg/10 py-4 text-lg text-soft">{l}<ArrowUpRight size={18} /></a></Drawer.Close>)}
                   <Drawer.Close asChild><button className="mt-6 flex items-center gap-2 text-sm text-mute"><X size={14} />Drag down or tap to close</button></Drawer.Close>
                 </Drawer.Content></Drawer.Portal>
             </Drawer.Root>
@@ -222,24 +226,11 @@ export default function App() {
 
         {/* Right side */}
         <section className="relative flex min-w-0 flex-col gap-16 p-5 pt-8 md:p-10">
-          <div className="stagger grid grid-cols-1 gap-x-6 gap-y-7 border-b sm:grid-cols-2 border-fg/10 pb-8 lg:grid-cols-4">
-            <motion.a href={BOOK} className="reveal group block" whileHover={{ y: -2 }} transition={spring}>
-              <span className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-mute"><span className="font-display text-orange">01</span>Book</span>
-              <span className="mt-1.5 flex items-center gap-1 font-display text-[19px] font-medium text-fg group-hover:text-orange transition-colors duration-200">Book a session<ArrowUpRight size={16} className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /></span>
-              <span className="text-[12px] text-mute">Tell me the idea, I reply fast.</span></motion.a>
-            <div className="reveal">
-              <span className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-mute"><span className="font-display text-orange">02</span>Socials</span>
-              <div className="mt-1.5 flex flex-col gap-0.5 text-[13px]">
-                {SOCIALS.map(([n, h, v]) => <a key={n} href={h} target={h.startsWith('http') ? '_blank' : undefined} rel="noreferrer" className="group flex items-baseline gap-2 text-soft hover:text-orange transition-colors duration-200">
-                  <span className="w-[62px] text-mute">{n}</span><span className="truncate" title={v}>{short(v)}</span></a>)}</div></div>
-            <motion.a href="#chapters" onClick={e => { e.preventDefault(); document.getElementById('chapters')?.scrollIntoView({ behavior: 'smooth' }) }} className="reveal group block" whileHover={{ y: -2 }} transition={spring}>
-              <span className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-mute"><span className="font-display text-orange">03</span>Work</span>
-              <span className="mt-1.5 flex items-center gap-1 font-display text-[19px] font-medium text-fg group-hover:text-orange transition-colors duration-200">View portfolio<ArrowDownRight size={16} /></span>
-              <span className="text-[12px] text-mute">Five chapters, newest first.</span></motion.a>
-            <div className="reveal">
-              <span className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-mute"><span className="font-display text-orange">04</span>Services</span>
-              <ul className="mt-1.5 flex flex-wrap gap-1.5">{SERVICES.map(s => <li key={s} className="rounded-full border border-fg/15 px-2.5 py-0.5 text-[12px] text-soft">{s}</li>)}</ul></div>
-          </div>
+          <nav aria-label="Quick links" className="stagger flex flex-wrap items-center gap-x-8 gap-y-4 border-b border-fg/10 pb-8">
+            {([['Book a session', BOOK_GMAIL, book], ['Socials', '#socials', (e: React.MouseEvent) => goTo('socials', e)], ['Work', '#chapters', (e: React.MouseEvent) => goTo('chapters', e)], ['Services', '#services', (e: React.MouseEvent) => goTo('services', e)]] as const).map(([l, h, f], i) =>
+              <motion.a key={l} href={h} onClick={f} target={i === 0 ? '_blank' : undefined} rel="noreferrer" className="reveal group flex items-center gap-1 font-display text-[19px] font-medium text-fg hover:text-orange transition-colors duration-200" whileHover={{ y: -2 }} transition={spring}>
+                {l}{i === 0 ? <ArrowUpRight size={16} className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /> : <ArrowDownRight size={16} className="transition-transform duration-200 group-hover:translate-y-0.5" />}</motion.a>)}
+          </nav>
 
           <h2 className="stagger text-[clamp(40px,6vw,88px)] font-medium leading-[0.92] text-fg">
             <span className="reveal block">Websites that</span><span className="reveal block text-orange">feel good to touch.</span></h2>
@@ -275,13 +266,31 @@ export default function App() {
 
           <div id="contact" className="flex flex-col items-start justify-between gap-6 border-t border-fg/10 pt-8 sm:flex-row sm:items-end">
             <p className="max-w-xs text-[13px] text-mute">Have a business with no site, or one that feels stiff? Let's fix that.</p>
-            <Magnetic onClick={() => { location.href = BOOK }} className="shimmer rounded-full bg-orange px-6 py-3 text-[14px] font-medium text-ink">
+            <Magnetic onClick={() => book()} className="shimmer rounded-full bg-orange px-6 py-3 text-[14px] font-medium text-ink">
               <span className="relative z-10 flex items-center gap-2">Book a session <ArrowUpRight size={16} /></span></Magnetic>
           </div>
         </section>
       </div>
       <Chapters />
       <Studio />
+      <section id="socials" className="mx-3 mt-6 rounded-[28px] bg-card p-6 md:mx-8 md:p-12">
+        <p className="mb-3 text-[11px] uppercase tracking-[0.18em] text-orange">Socials</p>
+        <h2 className="mb-8 text-[clamp(32px,5vw,64px)] font-medium leading-[0.95] text-fg">Say hi anywhere.</h2>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {SOCIALS.map(([n, h, v]) => <motion.a key={n} href={h} target={h.startsWith('http') ? '_blank' : undefined} rel="noreferrer" whileHover={{ y: -3 }} transition={spring}
+            className="group flex min-w-0 items-center justify-between gap-3 rounded-2xl border border-fg/10 p-5 transition-colors duration-200 hover:border-orange">
+            <span className="min-w-0"><span className="block font-display text-2xl font-medium text-fg group-hover:text-orange transition-colors duration-200">{n}</span>
+              <span className="block truncate text-[13px] text-mute">{v}</span></span><ArrowUpRight size={20} className="shrink-0 text-soft group-hover:text-orange" /></motion.a>)}
+        </div>
+      </section>
+      <section id="services" className="mx-3 mt-6 rounded-[28px] bg-card p-6 md:mx-8 md:p-12">
+        <p className="mb-3 text-[11px] uppercase tracking-[0.18em] text-orange">Services</p>
+        <h2 className="mb-8 text-[clamp(32px,5vw,64px)] font-medium leading-[0.95] text-fg">What I make.</h2>
+        <ul className="border-t border-fg/10">{SERVICES.map(s => <li key={s} className="group flex items-center justify-between border-b border-fg/10 py-5">
+          <span className="font-display text-[clamp(24px,3.5vw,44px)] font-medium text-fg group-hover:text-orange transition-colors duration-200">{s}</span>
+          <ArrowUpRight size={22} className="text-mute group-hover:text-orange transition-colors duration-200" /></li>)}</ul>
+        <motion.button onClick={() => book()} whileTap={{ scale: .97 }} transition={spring} className="mt-8 rounded-full bg-orange px-6 py-3 text-[14px] font-medium text-ink">Book a session</motion.button>
+      </section>
     </main>
     <Portal />
     <div className="p-3 md:p-8"><DuneFooter><p className="mt-8 text-[11px] text-mute/70">© 2026 BAMIO. Placeholder content.</p></DuneFooter></div>
