@@ -229,8 +229,8 @@ export default function App() {
         <section className="relative flex min-w-0 flex-col gap-16 p-5 pt-8 md:p-10">
           <nav aria-label="Quick links" className="stagger flex flex-wrap items-center gap-x-8 gap-y-4 border-b border-fg/10 pb-8">
             {([['Book a session', BOOK_GMAIL, book], ['Socials', '#socials', (e: React.MouseEvent) => goTo('socials', e)], ['Work', '#chapters', (e: React.MouseEvent) => goTo('chapters', e)], ['Services', '#services', (e: React.MouseEvent) => goTo('services', e)]] as const).map(([l, h, f], i) =>
-              <motion.a key={l} href={h} onClick={f} target={i === 0 ? '_blank' : undefined} rel="noreferrer" className="liquid reveal group flex items-center gap-1 font-display text-[19px] font-medium text-fg hover:text-orange transition-colors duration-200" whileHover={{ y: -2 }} transition={spring}>
-                <span aria-hidden className="liquid-blob" />{l}{i === 0 ? <ArrowUpRight size={16} className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /> : <ArrowDownRight size={16} className="transition-transform duration-200 group-hover:translate-y-0.5" />}</motion.a>)}
+              <motion.a key={l} href={h} onClick={f} target={i === 0 ? '_blank' : undefined} rel="noreferrer" className="reveal group flex items-center gap-1 font-display text-[19px] font-medium text-fg hover:text-orange transition-colors duration-200" whileHover={{ y: -2 }} transition={spring}>
+                {l}{i === 0 ? <ArrowUpRight size={16} className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /> : <ArrowDownRight size={16} className="transition-transform duration-200 group-hover:translate-y-0.5" />}</motion.a>)}
           </nav>
 
           <h2 className="stagger text-[clamp(40px,6vw,88px)] font-medium leading-[0.92] text-fg">
@@ -267,7 +267,7 @@ export default function App() {
 
           <div id="contact" className="flex flex-col items-start justify-between gap-6 border-t border-fg/10 pt-8 sm:flex-row sm:items-end">
             <p className="max-w-xs text-[13px] text-mute">Have a business with no site, or one that feels stiff? Let's fix that.</p>
-            <Magnetic onClick={() => book()} className="liquid liquid-solid rounded-full bg-orange px-6 py-3 text-[14px] font-medium text-ink"><span aria-hidden className="liquid-blob" />
+            <Magnetic onClick={() => book()} className="shimmer rounded-full bg-orange px-6 py-3 text-[14px] font-medium text-ink">
               <span className="relative z-10 flex items-center gap-2">Book a session <ArrowUpRight size={16} /></span></Magnetic>
           </div>
         </section>
@@ -279,7 +279,7 @@ export default function App() {
         <h2 className="mb-8 text-[clamp(32px,5vw,64px)] font-medium leading-[0.95] text-fg">Say hi anywhere.</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {SOCIALS.map(([n, h, v]) => <motion.a key={n} href={h} target={h.startsWith('http') ? '_blank' : undefined} rel="noreferrer" whileHover={{ y: -3 }} transition={spring}
-            className="liquid liquid-card group flex min-w-0 items-center justify-between gap-3 rounded-2xl border border-fg/10 p-5 transition-colors duration-200 hover:border-orange"><span aria-hidden className="liquid-blob" />
+            className="group flex min-w-0 items-center justify-between gap-3 rounded-2xl border border-fg/10 p-5 transition-colors duration-200 hover:border-orange">
             <span className="min-w-0"><span className="block font-display text-2xl font-medium text-fg group-hover:text-orange transition-colors duration-200">{n}</span>
               <span className="block truncate text-[13px] text-mute">{v}</span></span><ArrowUpRight size={20} className="shrink-0 text-soft group-hover:text-orange" /></motion.a>)}
         </div>
@@ -290,7 +290,7 @@ export default function App() {
         <ul className="border-t border-fg/10">{SERVICES.map(s => <li key={s} className="group flex items-center justify-between border-b border-fg/10 py-5">
           <span className="font-display text-[clamp(24px,3.5vw,44px)] font-medium text-fg group-hover:text-orange transition-colors duration-200">{s}</span>
           <ArrowUpRight size={22} className="text-mute group-hover:text-orange transition-colors duration-200" /></li>)}</ul>
-        <motion.button onClick={() => book()} whileTap={{ scale: .97 }} transition={spring} className="liquid liquid-solid mt-8 rounded-full bg-orange px-6 py-3 text-[14px] font-medium text-ink"><span aria-hidden className="liquid-blob" />Book a session</motion.button>
+        <motion.button onClick={() => book()} whileTap={{ scale: .97 }} transition={spring} className="mt-8 rounded-full bg-orange px-6 py-3 text-[14px] font-medium text-ink">Book a session</motion.button>
       </section>
     </main>
     <Portal />
