@@ -67,8 +67,10 @@ function Intro() {
     document.documentElement.style.overflow = 'hidden'
     const q = gsap.utils.selector(root.current)
     const n = { v: 0 }
-    const done = () => { document.documentElement.style.overflow = ''; setShow(false) }
+    let fin = false
+    const done = () => { if (fin) return; fin = true; document.documentElement.style.overflow = ''; setShow(false) }
     const tl = gsap.timeline({ onComplete: done })
+    const hard = window.setTimeout(() => { tl.kill(); done() }, 6500)
     tl.set(q('.il'), { yPercent: 115, rotate: 6 })
       .fromTo(q('.shard-top'), { x: -70, y: -70, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.6, ease: 'expo.out' }, 0.05)
       .fromTo(q('.shard-bot'), { x: 70, y: 70, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.6, ease: 'expo.out' }, 0.12)
@@ -79,7 +81,7 @@ function Intro() {
       .fromTo(q('.imeta'), { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.05 }, 0.2)
     const ball = q('.iball')[0] as HTMLElement, word = q('.iword')[0] as HTMLElement, shard = (q('.imark .shard-top')[0] || q('.imark')[0]) as Element | undefined
     const BT = 1.3
-    if (ball && word) {
+    if (ball && word) try {
       const wr = word.getBoundingClientRect(), fs = parseFloat(getComputedStyle(word).fontSize), s = ball.offsetWidth
       const ls = (q('.il') as HTMLElement[]).map(l => { const r = l.getBoundingClientRect(); return { l: r.left - wr.left, w: r.width } })
       const top = wr.height * CAP - s, base = wr.height * BASE - s
@@ -117,7 +119,7 @@ function Intro() {
       arc(fx, base, fs * .05, .22); squash(.15)
       tl.addLabel('settled', t + .25)
       tl.to(ball, { opacity: 0, duration: .3, ease: 'power2.in' }, 'out')
-    } else tl.addLabel('settled', 1.6)
+    } catch { tl.addLabel('settled', 1.6) } else tl.addLabel('settled', 1.6)
     tl.addLabel('out', 'settled+=0.6')
       .to(q('.il'), { yPercent: -115, duration: 0.45, ease: 'power3.in', stagger: 0.03 }, 'out')
       .to(q('.imark'), { opacity: 0, scale: .9, duration: 0.35, ease: 'power3.in' }, 'out')
@@ -126,7 +128,7 @@ function Intro() {
       .to(q('.ibot'), { yPercent: 100, duration: 0.7, ease: 'expo.inOut' }, 'out+=0.25')
     const skip = () => { if (tl.time() < tl.labels.settled) tl.seek('settled') }
     window.addEventListener('keydown', skip); root.current.addEventListener('click', skip)
-    return () => { window.removeEventListener('keydown', skip); tl.kill(); document.documentElement.style.overflow = '' }
+    return () => { window.clearTimeout(hard); window.removeEventListener('keydown', skip); tl.kill(); document.documentElement.style.overflow = '' }
   }, [show])
   if (!show) return null
   return <div ref={root} className="intro fixed inset-0 z-[80] cursor-pointer select-none overflow-hidden text-ink" aria-hidden>
