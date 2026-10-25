@@ -1,7 +1,7 @@
 @tailwind base;@tailwind components;@tailwind utilities;
 html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!important}
 :root{--page:26 25 24;--surface:10 10 10;--card:20 20 19;--fg:255 255 255;--soft:217 214 207;--mute:138 135 128;--grain:.04}
-html.light{--page:236 231 221;--surface:246 242 234;--card:236 231 222;--fg:17 16 15;--soft:43 41 38;--mute:112 108 101;--grain:.07}
+html.light{--page:236 231 221;--surface:246 242 234;--card:236 231 222;--fg:17 16 15;--soft:43 41 38;--mute:88 84 78;--grain:.07}
 .dark-scope{--surface:10 10 10;--card:20 20 19;--fg:255 255 255;--soft:217 214 207;--mute:138 135 128}
 html.light .grain{mix-blend-mode:multiply}
 ::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
@@ -36,3 +36,5 @@ html:not(.light) .chapters{background:#16130F;--ch-ink:#F1E9DB;--ch-mute:#9A8E7C
 html:not(.light) .paper-grain{mix-blend-mode:screen;opacity:.06}
 .cp{will-change:transform;transform:translateZ(0)}.mesh{will-change:transform;backface-visibility:hidden}.mesh-on{animation:mesh 18s ease-in-out infinite alternate}.ch-off .mesh-on{animation-play-state:paused}#chapters{contain:layout paint}
 @keyframes mesh{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(4%,-3%,0) scale(1.08)}}
+
+html.light #socials,html.light #services{background:rgb(var(--card))}

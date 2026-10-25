@@ -108,11 +108,55 @@ function Intro() {
   </div>
 }
 
-function SplitText({ text, className }: { text: string; className?: string }) {
-  return <span className={className} aria-label={text}>{text.split('').map((c, i) =>
-    <span key={i} className="inline-block overflow-hidden align-bottom"><motion.span aria-hidden className="inline-block"
-      initial={{ y: reduced ? 0 : '110%' }} animate={{ y: 0 }} transition={{ delay: (reduced ? 0 : 2.1) + i * 0.05, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
-      {c === ' ' ? '\u00A0' : c}</motion.span></span>)}</span>
+function BallWord({ text }: { text: string }) {
+  const wrap = useRef<HTMLSpanElement>(null)
+  const ball = useRef<HTMLSpanElement>(null)
+  useEffect(() => {
+    const w = wrap.current, b = ball.current
+    if (!w || !b) return
+    const S = () => b.offsetWidth
+    const metrics = () => {
+      const wr = w.getBoundingClientRect(), fs = parseFloat(getComputedStyle(w).fontSize)
+      const ls = [...w.querySelectorAll<HTMLElement>('.bw-l')].map(l => { const r = l.getBoundingClientRect(); return { cx: r.left - wr.left + r.width / 2, right: r.right - wr.left, bottom: r.bottom - wr.top } })
+      const base = ls[0].bottom - fs * 0.2, cap = base - fs * 0.7
+      return { ls, base, cap, fs }
+    }
+    const rest = () => { const m = metrics(), s = S(); gsap.set(b, { x: m.ls[m.ls.length - 1].right + m.fs * 0.06, y: m.base - s, scaleX: 1, scaleY: 1, opacity: 1 }) }
+    if (reduced) { rest(); const ro = new ResizeObserver(rest); ro.observe(w); return () => ro.disconnect() }
+    let tl: gsap.core.Timeline | null = null, done = false
+    const t0 = setTimeout(() => {
+      const m = metrics(), s = S(), top = m.cap - s
+      tl = gsap.timeline({ onComplete: () => { tl = null; done = true; rest() } })
+      gsap.set(b, { x: m.ls[0].cx - s / 2, y: top - m.fs * 2.2, opacity: 0, transformOrigin: '50% 100%' })
+      tl.to(b, { opacity: 1, duration: .15 })
+        .to(b, { y: top, duration: .55, ease: 'power2.in' }, 0)
+      const squash = () => tl!.to(b, { scaleX: 1.45, scaleY: .6, duration: .07, ease: 'power1.out' }).to(b, { scaleX: 1, scaleY: 1, duration: .12, ease: 'power1.in' })
+      squash()
+      const hop = (x: number, y: number, h: number, d: number) => {
+        tl!.addLabel('h')
+          .to(b, { x, duration: d, ease: 'sine.inOut' }, 'h')
+          .to(b, { y: Math.min(top, y) - h, scaleX: .85, scaleY: 1.2, duration: d / 2, ease: 'power2.out' }, 'h')
+          .to(b, { scaleX: 1, scaleY: 1, duration: d / 4, ease: 'sine.inOut' }, 'h+=' + d / 4)
+          .to(b, { y, duration: d / 2, ease: 'power2.in' }, 'h+=' + d / 2)
+          .to(b, { scaleY: 1.15, scaleX: .9, duration: d / 6 }, 'h+=' + d / 3)
+      }
+      for (let i = 1; i < m.ls.length; i++) { hop(m.ls[i].cx - s / 2, top, m.fs * (1.1 - i * .12), .5 - i * .03); squash() }
+      const fx = m.ls[m.ls.length - 1].right + m.fs * 0.06, fy = m.base - s
+      hop(fx, fy, m.fs * .55, .5); squash()
+      hop(fx, fy, m.fs * .18, .26); squash()
+      hop(fx, fy, m.fs * .05, .14)
+      tl.to(b, { scaleX: 1.15, scaleY: .85, duration: .06 }).to(b, { scaleX: 1, scaleY: 1, duration: .25, ease: 'elastic.out(1,.5)' })
+    }, 3100)
+    const onResize = () => { if (done) rest() }
+    const ro = new ResizeObserver(onResize); ro.observe(w)
+    return () => { clearTimeout(t0); tl?.kill(); ro.disconnect() }
+  }, [])
+  return <span ref={wrap} className="relative inline-block" aria-label={text + '.'}>
+    {text.split('').map((c, i) =>
+      <span key={i} className="inline-block overflow-hidden align-bottom"><motion.span aria-hidden className="bw-l inline-block"
+        initial={{ y: reduced ? 0 : '110%' }} animate={{ y: 0 }} transition={{ delay: (reduced ? 0 : 2.1) + i * 0.05, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>{c}</motion.span></span>)}
+    <span ref={ball} aria-hidden className="pointer-events-none absolute left-0 top-0 block h-[0.2em] w-[0.2em] rounded-full bg-current opacity-0 will-change-transform" />
+  </span>
 }
 
 function Counter({ to, suffix = '' }: { to: number; suffix?: string }) {
@@ -207,7 +251,7 @@ export default function App() {
           <div className="blob absolute left-1/2 top-[30%] h-[62%] w-[95%] -translate-x-1/2" aria-hidden />
           <div ref={heroImg} className="absolute inset-0"><motion.div className="absolute inset-0" style={{ x: px, y: py }}><Silhouette /></motion.div></div>
           <div className="relative z-10 flex items-center justify-between p-6">
-            <h1 className="flex items-center gap-2.5 text-[28px] font-semibold leading-none text-white"><span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-surface text-fg shadow-sm"><Mark className="h-[22px] w-[22px]" /></span><SplitText text="BAMIO" /></h1>
+            <h1 className="flex items-center gap-2.5 text-[28px] font-semibold leading-none text-white"><span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-surface text-fg shadow-sm"><Mark className="h-[22px] w-[22px]" /></span><BallWord text="BAMIO" /></h1>
             <Drawer.Root>
               <Drawer.Trigger asChild><motion.button whileTap={{ scale: .97 }} aria-label="Menu" className="rounded-full bg-black/20 p-2 text-white md:hidden"><Menu size={18} /></motion.button></Drawer.Trigger>
               <Drawer.Portal><Drawer.Overlay className="fixed inset-0 z-[65] bg-black/60" />
