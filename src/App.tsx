@@ -7,7 +7,7 @@ import { motion, useMotionValue, useSpring } from 'framer-motion'
 import { Toaster } from 'sonner'
 import { Drawer } from 'vaul'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
-import { Studio, Portal, DuneFooter } from './extras'
+import { Studio, Portal } from './extras'
 import { Mark } from './logo'
 import { Chapters } from './chapters'
 import { ArrowUpRight, ArrowDownRight, Sun, Moon, Menu, X } from 'lucide-react'
@@ -73,35 +73,50 @@ function Intro() {
       .fromTo(q('.shard-top'), { x: -70, y: -70, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.6, ease: 'expo.out' }, 0.05)
       .fromTo(q('.shard-bot'), { x: 70, y: 70, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.6, ease: 'expo.out' }, 0.12)
       .to(q('.il'), { yPercent: 0, rotate: 0, duration: 0.75, ease: 'back.out(1.6)', stagger: 0.06 }, 0.45)
-      .to(n, { v: 100, duration: 4.1, ease: 'power2.inOut', onUpdate: () => { const e = q('.icount')[0]; if (e) e.textContent = String(Math.round(n.v)).padStart(3, '0') } }, 0)
-      .fromTo(q('.ibar'), { scaleX: 0 }, { scaleX: 1, duration: 4.1, ease: 'power2.inOut' }, 0)
+      .to(n, { v: 100, duration: 5.2, ease: 'power2.inOut', onUpdate: () => { const e = q('.icount')[0]; if (e) e.textContent = String(Math.round(n.v)).padStart(3, '0') } }, 0)
+      .fromTo(q('.ibar'), { scaleX: 0 }, { scaleX: 1, duration: 5.2, ease: 'power2.inOut' }, 0)
       .fromTo(q('.iline'), { yPercent: 100, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, 0.45)
       .fromTo(q('.imeta'), { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.05 }, 0.2)
-    const ball = q('.iball')[0] as HTMLElement, word = q('.iword')[0] as HTMLElement
-    const BT = 1.35
+    const ball = q('.iball')[0] as HTMLElement, word = q('.iword')[0] as HTMLElement, shard = (q('.imark .shard-top')[0] || q('.imark')[0]) as Element | undefined
+    const BT = 1.3
     if (ball && word) {
       const wr = word.getBoundingClientRect(), fs = parseFloat(getComputedStyle(word).fontSize), s = ball.offsetWidth
       const ls = (q('.il') as HTMLElement[]).map(l => { const r = l.getBoundingClientRect(); return { l: r.left - wr.left, w: r.width } })
       const top = wr.height * CAP - s, base = wr.height * BASE - s
       const xs = [ls[0].l + ls[0].w * .45, ls[1].l + ls[1].w * .5, ls[2].l + ls[2].w * .2, ls[3].l + ls[3].w * .5].map(x => x - s / 2)
       const fx = ls[4].l + ls[4].w + fs * .1
-      gsap.set(ball, { x: xs[0], y: top - fs * 1.1, opacity: 0, transformOrigin: '50% 100%' })
-      tl.to(ball, { opacity: 1, duration: .12 }, BT).to(ball, { y: top, duration: .45, ease: 'power2.in' }, BT)
-      let t = BT + .45
-      const squash = () => { tl.to(ball, { scaleX: 1.4, scaleY: .62, duration: .06, ease: 'power1.out' }, t).to(ball, { scaleX: 1, scaleY: 1, duration: .1 }, t + .06) }
-      const hop = (x: number, y: number, h: number, d: number) => {
-        tl.to(ball, { x, duration: d, ease: 'sine.inOut' }, t)
-          .to(ball, { y: Math.min(top, y) - h, scaleX: .86, scaleY: 1.18, duration: d / 2, ease: 'power2.out' }, t)
-          .to(ball, { scaleX: 1, scaleY: 1, duration: d / 4 }, t + d / 4)
-          .to(ball, { y, duration: d / 2, ease: 'power2.in' }, t + d / 2)
+      const mr = shard ? shard.getBoundingClientRect() : null
+      const sx = mr ? mr.left - wr.left + mr.width * .55 - s / 2 : xs[0], sy = mr ? mr.top - wr.top + mr.height * .22 - s / 2 : top - fs
+      const pos = { x: sx, y: sy }, plan = { x: sx, y: sy }
+      gsap.set(ball, { x: sx, y: sy, scale: 0, opacity: 1, transformOrigin: '50% 100%' })
+      // pop out of the mark's top (black) part
+      tl.to(ball, { scale: 1, duration: .28, ease: 'back.out(2.2)' }, BT)
+      let t = BT + .12
+      // projectile arc: x linear in time, y parabola (constant gravity), linear time = physical
+      const arc = (x1: number, y1: number, h: number, d: number) => {
+        const x0 = { v: 0 }, from = { ...plan }; plan.x = x1; plan.y = y1
+        tl.to(x0, { v: 1, duration: d, ease: 'none', onUpdate: () => { const p = x0.v
+          pos.x = from.x + (x1 - from.x) * p; pos.y = from.y + (y1 - from.y) * p - 4 * h * p * (1 - p)
+          gsap.set(ball, { x: pos.x, y: pos.y }) } }, t)
+        tl.to(ball, { scaleX: .9, scaleY: 1.12, duration: d * .2, ease: 'sine.out' }, t)
+          .to(ball, { scaleX: 1, scaleY: 1, duration: d * .3, ease: 'sine.inOut' }, t + d * .2)
+          .to(ball, { scaleX: .92, scaleY: 1.1, duration: d * .2, ease: 'sine.in' }, t + d * .8)
         t += d
       }
-      squash()
-      ;[[xs[1], .55, .42], [xs[2], .45, .38], [xs[3], .38, .34]].forEach(([x, h, d]) => { hop(x, top, fs * h, d); squash() })
-      hop(fx, base, fs * .32, .4); squash(); hop(fx, base, fs * .1, .2); squash(); hop(fx, base, fs * .03, .12)
-      tl.to(ball, { scaleX: 1.12, scaleY: .88, duration: .05 }, t).to(ball, { scaleX: 1, scaleY: 1, duration: .25, ease: 'elastic.out(1,.5)' }, t + .05)
-      tl.addLabel('settled', t + .3)
-      tl.to(ball, { y: base - fs * 1.2, opacity: 0, duration: .45, ease: 'power3.in' }, 'out')
+      const squash = (k = 1) => {
+        tl.to(ball, { scaleX: 1 + .32 * k, scaleY: 1 - .3 * k, duration: .07, ease: 'sine.out' }, t)
+          .to(ball, { scaleX: 1, scaleY: 1, duration: .16, ease: 'sine.out' }, t + .07)
+        t += .04
+      }
+      arc(xs[0], top, fs * .35, .7); squash()
+      arc(xs[1], top, fs * .62, .6); squash(.9)
+      arc(xs[2], top, fs * .52, .56); squash(.8)
+      arc(xs[3], top, fs * .42, .52); squash(.7)
+      arc(fx, base, fs * .32, .55); squash(.6)
+      arc(fx, base, fs * .14, .36); squash(.35)
+      arc(fx, base, fs * .05, .22); squash(.15)
+      tl.addLabel('settled', t + .25)
+      tl.to(ball, { opacity: 0, duration: .3, ease: 'power2.in' }, 'out')
     } else tl.addLabel('settled', 1.6)
     tl.addLabel('out', 'settled+=0.6')
       .to(q('.il'), { yPercent: -115, duration: 0.45, ease: 'power3.in', stagger: 0.03 }, 'out')
@@ -323,6 +338,5 @@ export default function App() {
       </section>
     </main>
     <Portal />
-    <div className="p-3 md:p-8"><DuneFooter><p className="mt-8 text-[11px] text-mute/70">© 2026 BAMIO. Placeholder content.</p></DuneFooter></div>
   </>
 }
