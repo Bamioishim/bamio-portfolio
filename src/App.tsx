@@ -93,7 +93,7 @@ function Intro() {
     <div className="relative z-[2] flex h-full flex-col justify-between p-5 md:p-8">
       <div className="ifade flex justify-between text-[11px] uppercase tracking-[.2em]"><span className="imeta">Portfolio — ©2026</span><span className="imeta">Available — 2026</span></div>
       <div className="flex flex-col items-center">
-        <Mark className="imark mb-5 h-[16vw] w-[16vw] overflow-visible md:mb-6 md:h-[9vw] md:w-[9vw]" top="#111111" bot="#F3EEE6" />
+        <Mark className="imark mb-[18vw] h-[16vw] w-[16vw] overflow-visible md:mb-[9vw] md:h-[9vw] md:w-[9vw]" top="#111111" bot="#F3EEE6" />
         <div className="relative">
           <h1 className="flex overflow-hidden text-[24vw] font-semibold leading-[.82] tracking-[-.06em] md:text-[17vw]">{'BAMIO'.split('').map((c, i) => <span key={i} className="il inline-block">{c}</span>)}</h1>
         </div>
