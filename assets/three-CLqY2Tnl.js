@@ -1,4 +1,4 @@
-import{r as j0,g as dd,j as Ve}from"./index-DGroj8IW.js";/**
+import{r as j0,g as dd,j as Ve}from"./index-DCf4dEpg.js";/**
  * @license
  * Copyright 2010-2024 Three.js Authors
  * SPDX-License-Identifier: MIT
