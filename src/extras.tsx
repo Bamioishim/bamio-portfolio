@@ -1,9 +1,19 @@
 import { BODY, LIT, SHAPE_T } from './bamio-shape'
-import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { Component, lazy, Suspense, useEffect, useRef, useState, type ReactNode } from 'react'
 import gsap from 'gsap'
 const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-const ParticleHead = lazy(() => import('./three').then(m => ({ default: m.ParticleHead })))
-const Dunes = lazy(() => import('./three').then(m => ({ default: m.Dunes })))
+const ParticleHeadL = lazy(() => import('./three').then(m => ({ default: m.ParticleHead })))
+const DunesL = lazy(() => import('./three').then(m => ({ default: m.Dunes })))
+
+class GLBoundary extends Component<{ children: ReactNode }, { bad: boolean }> {
+  state = { bad: false }
+  static getDerivedStateFromError() { return { bad: true } }
+  componentDidCatch() {}
+  render() { return this.state.bad ? null : this.props.children }
+}
+const glOK = (() => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')) } catch { return false } })()
+const ParticleHead = (p: { active: boolean }) => glOK ? <GLBoundary><ParticleHeadL {...p} /></GLBoundary> : null
+const Dunes = (p: { active: boolean }) => glOK ? <GLBoundary><DunesL {...p} /></GLBoundary> : null
 
 function useInView<T extends HTMLElement>(margin = '200px') {
   const ref = useRef<T>(null); const [seen, setSeen] = useState(false); const [vis, setVis] = useState(false)
