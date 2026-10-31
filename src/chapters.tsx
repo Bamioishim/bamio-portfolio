@@ -3,19 +3,21 @@ import gsap from 'gsap'
 const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 const chapters: { n: string; k: string; y: string; h: string; c: string; g: string; u?: string; img?: string; wip?: boolean }[] = [
-  { n: '01', k: 'Soft Landing', y: "'26", h: 'Landing softly', c: 'A relocation guide that matches you with neighbourhoods that fit your taste.', u: 'https://softlanding-mauve.vercel.app', img: import.meta.env.BASE_URL + 'chapters/softlanding.webp',
+  { n: '01', k: 'Zeron', y: "'26", h: 'Down we go', c: 'A pixel dungeon where every sword, potion and duel runs on $wif, with zero ETH needed.', u: 'https://zeron-game.vercel.app', img: import.meta.env.BASE_URL + 'chapters/zeron.webp',
+    g: 'radial-gradient(at 20% 22%,#C9D96A 0,transparent 55%),radial-gradient(at 82% 20%,#7A8B2E 0,transparent 50%),radial-gradient(at 65% 88%,#2A2416 0,transparent 55%),radial-gradient(at 15% 80%,#A8743A 0,transparent 50%),#3E3420' },
+  { n: '02', k: 'Embros', y: "'26", h: 'Send it later', c: 'A crypto fee forecaster that tells you when to send for cheaper fees.', u: 'https://embros.vercel.app', img: import.meta.env.BASE_URL + 'chapters/embros.webp',
+    g: 'radial-gradient(at 22% 20%,#F2A65A 0,transparent 55%),radial-gradient(at 80% 25%,#C2502A 0,transparent 50%),radial-gradient(at 65% 88%,#2B1610 0,transparent 55%),radial-gradient(at 15% 82%,#E07B39 0,transparent 50%),#5A2A18' },
+  { n: '03', k: 'Soft Landing', y: "'26", h: 'Landing softly', c: 'A relocation guide that matches you with neighbourhoods that fit your taste.', u: 'https://softlanding-mauve.vercel.app', img: import.meta.env.BASE_URL + 'chapters/softlanding.webp',
     g: 'radial-gradient(at 18% 22%,#F2B87A 0,transparent 55%),radial-gradient(at 82% 18%,#E8743B 0,transparent 50%),radial-gradient(at 70% 85%,#8A4B2A 0,transparent 55%),radial-gradient(at 20% 80%,#D9A066 0,transparent 50%),#C9673A' },
-  { n: '02', k: 'BrainDump', y: "'26", h: 'Empty the head', c: 'Dump everything on your mind and turn it into a plan for the day.', u: 'https://braindump-ewew4u2s.manus.space', img: import.meta.env.BASE_URL + 'chapters/braindump.webp',
+  { n: '04', k: 'BrainDump', y: "'26", h: 'Empty the head', c: 'Dump everything on your mind and turn it into a plan for the day.', u: 'https://braindump-ewew4u2s.manus.space', img: import.meta.env.BASE_URL + 'chapters/braindump.webp',
     g: 'radial-gradient(at 25% 20%,#C8D49A 0,transparent 55%),radial-gradient(at 80% 30%,#6E8B4E 0,transparent 50%),radial-gradient(at 60% 90%,#2F4A2C 0,transparent 55%),radial-gradient(at 10% 75%,#A9B778 0,transparent 50%),#55703F' },
-  { n: '03', k: 'RedTeam Demo', y: "'26", h: 'Break it first', c: 'AI agents that attack your app before hackers do.', wip: true, img: import.meta.env.BASE_URL + 'chapters/redteam.webp',
-    g: 'radial-gradient(at 20% 25%,#F0A08A 0,transparent 55%),radial-gradient(at 85% 20%,#B8322A 0,transparent 50%),radial-gradient(at 65% 85%,#5E1A16 0,transparent 55%),radial-gradient(at 15% 85%,#D9664E 0,transparent 50%),#8E2A22' },
-  { n: '04', k: 'Specter', y: "'26", h: 'A ghost in the chat', c: 'A floating stream assistant that reads Twitch chat and talks back out loud.', img: import.meta.env.BASE_URL + 'chapters/specter.webp', wip: true,
+  { n: '05', k: 'ORI', y: "'26", h: 'One balance', c: 'A wallet that pulls your balances across chains into one simple view.', u: 'https://ori-preview.vercel.app', img: import.meta.env.BASE_URL + 'chapters/ori.webp', wip: true,
     g: 'radial-gradient(at 20% 20%,#3A6B5E 0,transparent 55%),radial-gradient(at 80% 80%,#0E2A24 0,transparent 55%),#14201D' },
-  { n: '05', k: 'ORI', y: "'26", h: 'One balance', c: 'A wallet that pulls your balances across chains into one simple view.', img: import.meta.env.BASE_URL + 'chapters/ori.webp', wip: true,
+  { n: '06', k: 'Specter', y: "'26", h: 'A ghost in the chat', c: 'A floating stream assistant that reads Twitch chat and talks back out loud.', img: import.meta.env.BASE_URL + 'chapters/specter.webp', wip: true,
     g: 'radial-gradient(at 20% 20%,#3A6B5E 0,transparent 55%),radial-gradient(at 80% 80%,#0E2A24 0,transparent 55%),#14201D' },
-  { n: '06', k: 'Night Posters', y: "'25", h: 'After dark', c: 'Visual work: a poster series made in 2025, alongside the Orange Series.',
+  { n: '07', k: 'Night Posters', y: "'25", h: 'After dark', c: 'Visual work: a poster series made in 2025, alongside the Orange Series.',
     g: 'radial-gradient(at 22% 18%,#E9C46A 0,transparent 55%),radial-gradient(at 80% 25%,#B5652B 0,transparent 50%),radial-gradient(at 70% 88%,#3B2A1A 0,transparent 55%),radial-gradient(at 15% 80%,#8C5A2B 0,transparent 50%),#6B4423' },
-  { n: '07', k: 'Hackathons', y: 'Now', h: 'Seven and counting', c: 'Seven hackathons so far, building ideas end to end and shipping them fast.',
+  { n: '08', k: 'Hackathons', y: 'Now', h: 'Seven and counting', c: 'Seven hackathons so far, building ideas end to end and shipping them fast.',
     g: 'radial-gradient(at 20% 20%,#F3D9B1 0,transparent 55%),radial-gradient(at 85% 30%,#C98B5B 0,transparent 50%),radial-gradient(at 60% 90%,#7A4E36 0,transparent 55%),radial-gradient(at 10% 80%,#E3B58A 0,transparent 50%),#B07A54' },
 ]
 
