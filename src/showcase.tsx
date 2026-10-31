@@ -19,10 +19,7 @@ const VIDEOS = [
   ['cmbg', 'CMBG RUN', 'Gameplay clip for the CMBG meme contest'],
   ['aqua0', 'Aqua0 Season 0', 'Season launch announcement'],
   ['embros', 'Embros', 'Animated hero for the fee forecaster'],
-  ['clausepay', 'ClausePay', 'Product walkthrough demo'],
-  ['poise', 'Poise', 'Cinematic brand film'],
   ['ori', 'ORI', 'Wallet app demo', true],
-  ['klink', 'KLINK', 'Short promo clip'],
 ].map(([k, t, d, tall]) => ({ k: k as string, t: t as string, d: d as string, tall: !!tall }))
 
 const PAD = 0.07, R = 0.11, TILT = 0.18, TURN = 1000, DWELL = 1300
