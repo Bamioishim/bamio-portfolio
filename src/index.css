@@ -19,7 +19,8 @@ h1,h2,h3{font-family:"Clash Display",sans-serif;letter-spacing:-0.035em}
 .marquee{animation:mq 28s linear infinite}.marquee:hover{animation-play-state:paused}
 @keyframes mq{to{transform:translateX(-50%)}}
 @media (hover:none){.cursor-dot{display:none}}
-@media (hover:hover){body,a,button{cursor:none}}
+@media (hover:hover){html.has-cursor body,html.has-cursor a,html.has-cursor button{cursor:none}}
+.cursor-dot{opacity:0;box-shadow:0 0 0 1.5px rgba(255,255,255,.9),0 0 0 3px rgba(0,0,0,.35);will-change:transform}html.has-cursor .cursor-dot{opacity:1}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 .halo{border:1px solid rgba(255,90,31,.55);box-shadow:0 0 24px rgba(255,90,31,.25),inset 0 0 24px rgba(255,90,31,.12);animation:halo 9s ease-in-out infinite}
 .halo::after{content:"";position:absolute;inset:-1px;border-radius:9999px;background:conic-gradient(from var(--a),transparent 0deg,rgba(255,140,80,.9) 30deg,transparent 70deg);

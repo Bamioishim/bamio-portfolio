@@ -51,10 +51,12 @@ function Cursor() {
   const sx = useSpring(x, { stiffness: 500, damping: 40 }), sy = useSpring(y, { stiffness: 500, damping: 40 })
   const [big, setBig] = useState(false)
   useEffect(() => {
-    const m = (e: MouseEvent) => { x.set(e.clientX); y.set(e.clientY); setBig(!!(e.target as HTMLElement).closest('a,button')) }
-    window.addEventListener('mousemove', m); return () => window.removeEventListener('mousemove', m)
+    const m = (e: PointerEvent) => { if (e.pointerType === 'touch') return
+      x.set(e.clientX); y.set(e.clientY); document.documentElement.classList.add('has-cursor')
+      const t = e.target as Element | null; setBig(!!(t && t.closest && t.closest('a,button'))) }
+    window.addEventListener('pointermove', m, { passive: true }); return () => { window.removeEventListener('pointermove', m); document.documentElement.classList.remove('has-cursor') }
   }, [x, y])
-  return <motion.div className="cursor-dot pointer-events-none fixed left-0 top-0 z-[70] rounded-full bg-orange mix-blend-difference"
+  return <motion.div className="cursor-dot pointer-events-none fixed left-0 top-0 z-[90] rounded-full bg-orange"
     style={{ x: sx, y: sy, translateX: '-50%', translateY: '-50%' }} animate={{ width: big ? 48 : 10, height: big ? 48 : 10 }} transition={spring} />
 }
 
