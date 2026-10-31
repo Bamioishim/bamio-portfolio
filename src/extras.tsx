@@ -11,7 +11,7 @@ class GLBoundary extends Component<{ children: ReactNode }, { bad: boolean }> {
   componentDidCatch() {}
   render() { return this.state.bad ? null : this.props.children }
 }
-const glOK = (() => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')) } catch { return false } })()
+export const glOK = (() => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')) } catch { return false } })()
 const ParticleHead = (p: { active: boolean }) => glOK ? <GLBoundary><ParticleHeadL {...p} /></GLBoundary> : null
 const Dunes = (p: { active: boolean }) => glOK ? <GLBoundary><DunesL {...p} /></GLBoundary> : null
 

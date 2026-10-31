@@ -15,9 +15,7 @@ const chapters: { n: string; k: string; y: string; h: string; c: string; g: stri
     g: 'radial-gradient(at 20% 20%,#3A6B5E 0,transparent 55%),radial-gradient(at 80% 80%,#0E2A24 0,transparent 55%),#14201D' },
   { n: '06', k: 'Specter', y: "'26", h: 'A ghost in the chat', c: 'A floating stream assistant that reads Twitch chat and talks back out loud.', img: import.meta.env.BASE_URL + 'chapters/specter.webp', wip: true,
     g: 'radial-gradient(at 20% 20%,#3A6B5E 0,transparent 55%),radial-gradient(at 80% 80%,#0E2A24 0,transparent 55%),#14201D' },
-  { n: '07', k: 'Night Posters', y: "'25", h: 'After dark', c: 'Visual work: a poster series made in 2025, alongside the Orange Series.',
-    g: 'radial-gradient(at 22% 18%,#E9C46A 0,transparent 55%),radial-gradient(at 80% 25%,#B5652B 0,transparent 50%),radial-gradient(at 70% 88%,#3B2A1A 0,transparent 55%),radial-gradient(at 15% 80%,#8C5A2B 0,transparent 50%),#6B4423' },
-  { n: '08', k: 'Hackathons', y: 'Now', h: 'Seven and counting', c: 'Seven hackathons so far, building ideas end to end and shipping them fast.',
+  { n: '07', k: 'Hackathons', y: 'Now', h: 'Seven and counting', c: 'Seven hackathons so far, building ideas end to end and shipping them fast.',
     g: 'radial-gradient(at 20% 20%,#F3D9B1 0,transparent 55%),radial-gradient(at 85% 30%,#C98B5B 0,transparent 50%),radial-gradient(at 60% 90%,#7A4E36 0,transparent 55%),radial-gradient(at 10% 80%,#E3B58A 0,transparent 50%),#B07A54' },
 ]
 

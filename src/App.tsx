@@ -10,6 +10,7 @@ import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { Studio, Portal } from './extras'
 import { Mark } from './logo'
 import { Chapters } from './chapters'
+import { Landing, Videos } from './showcase'
 import { ArrowUpRight, ArrowDownRight, Sun, Moon, Menu, X } from 'lucide-react'
 gsap.registerPlugin(ScrollTrigger)
 const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -17,8 +18,8 @@ const spring = { type: 'spring', stiffness: 400, damping: 28 } as const
 
 const projects = [
   { n: 'Soft Landing', y: "'26", t: 'Web', isNew: true }, { n: 'BrainDump', y: "'26", t: 'Web' },
-  { n: 'RedTeam Demo', y: "'26", t: 'Web' }, { n: 'Night Posters', y: "'25", t: 'Visual' },
-  { n: 'Orange Series', y: "'25", t: 'Visual' }, { n: 'Grid System', y: "'25", t: 'Web' },
+  { n: 'Zeron', y: "'26", t: 'Web' }, { n: 'Embros', y: "'26", t: 'Web' },
+  { n: 'CMBG RUN', y: "'26", t: 'Web' }, { n: 'Grid System', y: "'25", t: 'Web' },
   { n: 'Type Studies', y: "'24", t: 'Visual' }, { n: 'Signal Deck', y: "'24", t: 'Web' },
 ]
 const stack = [['Lovable','Web build'],['Manus','Web build'],['Render','Hosting'],['GitHub','Code'],['GSAP','Motion'],['Lenis','Scroll'],['Figma','Visual design'],['Replit','Web build']]
@@ -32,7 +33,7 @@ let lenisRef: Lenis | null = null
 function goTo(id: string, e?: { preventDefault(): void }) { e?.preventDefault(); const el = document.getElementById(id); if (!el) return
   if (lenisRef) lenisRef.scrollTo(el, { offset: -16, duration: 1.4 }); else el.scrollIntoView({ behavior: 'smooth' }) }
 const SOCIALS = [['X', 'https://x.com/bamio_xZ', '@bamio_xZ'], ['Telegram', 'https://t.me/bamio_xZ', '@bamio_xZ'], ['Email', 'mailto:bamio6467@gmail.com', 'bamio6467@gmail.com']]
-const SERVICES = ['Web design & builds', 'Brand design', 'Posters', 'Video']
+const SERVICES = ['Web design & builds', 'Brand design', 'Landing pages', 'Video']
 const clients = ['Qloo','Sui','Hydra','Burrowpad','IBNAi','OmniRush','Aqua0','Data Labs']
 
 function useSmooth() {
@@ -321,6 +322,8 @@ export default function App() {
         </section>
       </div>
       <Chapters />
+      <Landing />
+      <Videos />
       <Studio />
       <section id="socials" className="mx-3 mt-6 rounded-[28px] bg-card p-6 md:mx-8 md:p-12">
         <p className="mb-3 text-[11px] uppercase tracking-[0.18em] text-orange">Socials</p>
